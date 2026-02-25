@@ -172,7 +172,21 @@ export default function Page() {
         .scroll-hide::-webkit-scrollbar{display:none} .scroll-hide{-ms-overflow-style:none;scrollbar-width:none}
 
         /* Grid dot pattern */
-        .bg-grid { background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; }
+        .bg-grid { 
+          background-image: 
+            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), 
+            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); 
+          background-size: 32px 32px; 
+        }
+        /* Richer grid for hero sections */
+        .bg-grid-rich { 
+          background-image: 
+            radial-gradient(circle at 20% 50%, rgba(123,47,255,0.06) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(240,98,35,0.05) 0%, transparent 50%),
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); 
+          background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px; 
+        }
 
         /* Orange accent line */
         .accent-line::before { content:''; display:block; width:40px; height:3px; background:linear-gradient(90deg, #f06223, #ff8040); border-radius:2px; margin-bottom:12px; }
@@ -218,7 +232,7 @@ export default function Page() {
       </div>
 
       {/* ════════════ FORM 1 ════════════ */}
-      <section className="relative px-5 pt-12 pb-12 noise bg-grid" style={{ background: C.dark1 }}>
+      <section className="relative px-5 pt-12 pb-12 noise bg-grid-rich" style={{ background: C.dark1 }}>
         {/* Glow blobs */}
         <div className="absolute top-0 left-0 w-56 h-56 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(123,47,255,0.12) 0%, transparent 70%)`, transform: 'translate(-40%, -30%)' }} />
         <div className="absolute bottom-0 right-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(240,98,35,0.1) 0%, transparent 70%)`, transform: 'translate(30%, 20%)' }} />
@@ -264,7 +278,7 @@ export default function Page() {
       </section>
 
       {/* ════════════ OBJECTIVES ════════════ */}
-      <section className="px-5 py-12 bg-grid" style={{ background: C.dark1 }}>
+      <section className="px-5 py-12 bg-grid-rich" style={{ background: C.dark1 }}>
         <Reveal>
           <div className="accent-line-center">
             <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-1" style={{ color: C.orange }}>Bạn sẽ đạt được</p>
@@ -357,7 +371,7 @@ export default function Page() {
       <div className="divider" />
 
       {/* ════════════ TESTIMONIALS ════════════ */}
-      <section className="relative px-5 py-12 bg-grid noise" style={{ background: C.dark1 }}>
+      <section className="relative px-5 py-12 bg-grid-rich noise" style={{ background: C.dark1 }}>
         {/* Purple glow */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full" style={{ background: `radial-gradient(circle, rgba(123,47,255,0.08) 0%, transparent 70%)` }} />
@@ -436,7 +450,7 @@ export default function Page() {
       </section>
 
       {/* ════════════ VIDEOS ════════════ */}
-      <section className="px-5 py-12 bg-grid" style={{ background: C.dark1 }}>
+      <section className="px-5 py-12 bg-grid-rich" style={{ background: C.dark1 }}>
         <Reveal>
           <div className="accent-line-center">
             <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-1" style={{ color: C.purple }}>MAXEDU Studio</p>
@@ -504,7 +518,7 @@ export default function Page() {
         <div className="grid grid-cols-2 gap-3">
           {galleryImages.map((_, i) => (
             <Reveal key={i} delay={i * 0.06} direction="scale">
-              <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: i % 2 === 0 ? '3/4' : '1/1', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: '1/1', border: '1px solid rgba(255,255,255,0.07)' }}>
                 <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014034/demo/212973ed772ff971a03e.jpg.jpg"
                   alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
               </div>
@@ -524,19 +538,19 @@ export default function Page() {
       </section>
 
       {/* ════════════ GALLERY SLIDER ════════════ */}
-      <section className="relative" style={{ background: C.black }} {...gallerySwipe}>
-        <div className="overflow-hidden">
-          <div className="flex transition-transform duration-600 ease-[cubic-bezier(.16,1,.3,1)]"
-            style={{ transform: `translateX(-${gallerySlideIdx * 100}%)` }}>
+      <section className="relative py-6" style={{ background: C.black }} {...gallerySwipe}>
+        <div className="overflow-hidden px-5">
+          <div className="flex transition-transform duration-600 ease-[cubic-bezier(.16,1,.3,1)] gap-4"
+            style={{ transform: `translateX(calc(-${gallerySlideIdx * 100}% - ${gallerySlideIdx * 16}px))` }}>
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="w-full flex-shrink-0">
+              <div key={i} className="w-full flex-shrink-0 rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
                 <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014033/demo/d5afc963f3a17dff24b0.jpg.jpg"
                   alt={`Gallery Slide ${i + 1}`} className="w-full h-auto block" />
               </div>
             ))}
           </div>
         </div>
-        <div className="flex justify-center gap-1.5 py-5" style={{ background: C.dark1 }}>
+        <div className="flex justify-center gap-1.5 pt-4 pb-1" style={{ background: C.black }}>
           {Array.from({ length: 8 }).map((_, i) => (
             <button key={i} onClick={() => setGallerySlideIdx(i)}
               className="h-1 rounded-full transition-all duration-400"
@@ -552,17 +566,6 @@ export default function Page() {
       <section style={{ background: C.dark1 }}>
         <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014590/demo/khoa_co_ban_video_399k_ypvGvvLkRBS79hp5F-original.jpg.jpg"
           alt="Hướng dẫn đăng ký" className="w-full h-auto block" />
-        <div className="px-5 py-6" style={{ background: C.dark1 }}>
-          <Reveal>
-            <button className="w-full py-4 rounded-xl font-bold text-[12px] leading-snug anim-gradient"
-              style={{
-                background: `linear-gradient(135deg, ${C.orange}, #FFB800, ${C.orange})`,
-                backgroundSize: '200% 200%', color: C.black
-              }}>
-              HƯỚNG DẪN CHI TIẾT CÁC BƯỚC ĐĂNG KÝ<br />NHẬN TÀI LIỆU MIỄN PHÍ TẠI MAXEDU
-            </button>
-          </Reveal>
-        </div>
       </section>
 
       {/* ════════════ ORANGE CTA + FORM 3 ════════════ */}
@@ -596,7 +599,7 @@ export default function Page() {
       </section>
 
       {/* ════════════ FINAL CTA ════════════ */}
-      <section className="relative px-5 py-16 text-center bg-grid noise" style={{ background: C.black }}>
+      <section className="relative px-5 py-16 text-center bg-grid-rich noise" style={{ background: C.black }}>
         <div className="absolute top-0 inset-x-0 h-[1px]" style={{ background: `linear-gradient(90deg, transparent, ${C.purple}, transparent)` }} />
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full" style={{ background: `radial-gradient(circle, rgba(123,47,255,0.08) 0%, transparent 70%)` }} />
