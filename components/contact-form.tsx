@@ -33,9 +33,16 @@ export function ContactForm() {
         }),
       });
 
+      const data = await response.json();
+      
       if (response.ok) {
         setMessage('Gửi thành công!');
         setFormData({ fullName: '', email: '', phone: '' });
+        
+        // Chuyển hướng sau khi gửi thành công
+        if (data.redirectUrl) {
+          window.location.href = data.redirectUrl;
+        }
       } else {
         setMessage('Có lỗi xảy ra, vui lòng thử lại.');
       }
