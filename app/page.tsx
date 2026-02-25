@@ -143,11 +143,11 @@ export default function Page() {
   useEffect(() => { const t = setInterval(() => setActiveTab(p => (p + 1) % 3), 5000); return () => clearInterval(t); }, []);
 
   return (
-    <div className="max-w-[430px] mx-auto overflow-hidden" style={{ fontFamily: "'Syne', sans-serif", background: C.bg0 }}>
+    <div className="max-w-[430px] mx-auto overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", background: C.bg0 }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
-        .font-mono { font-family: 'Space Mono', monospace; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
 
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
         @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
@@ -263,7 +263,7 @@ export default function Page() {
       }}>
         <div className="anim-marquee whitespace-nowrap flex">
           {[0, 1].map(i => (
-            <span key={i} className="inline-flex gap-10 font-semibold text-[10px] tracking-[0.2em] uppercase px-6" style={{ color: 'rgba(255,255,255,0.95)', fontFamily: "'Space Mono', monospace" }}>
+            <span key={i} className="inline-flex gap-10 font-semibold text-[10px] tracking-[0.2em] uppercase px-6" style={{ color: 'rgba(255,255,255,0.95)', fontFamily: "'JetBrains Mono', monospace" }}>
               <span>🔥 Ưu đãi có hạn</span><span>⚡ Học AI thực chiến</span>
               <span>🚀 Tăng thu nhập 3x</span><span>💡 5000+ học viên</span>
               <span>🔥 Ưu đãi có hạn</span><span>⚡ Học AI thực chiến</span>
@@ -331,7 +331,7 @@ export default function Page() {
             <Reveal key={i} delay={i * 0.07} direction="scale">
               <div className={`py-5 text-center ${i < 3 ? 'stat-sep' : ''}`}>
                 <div className="font-mono text-[17px] font-bold leading-none text-orange-grad">{s.value}</div>
-                <div className="text-[9px] uppercase tracking-[0.15em] mt-2 font-semibold" style={{ color: C.white45, fontFamily: "'Space Mono', monospace" }}>{s.label}</div>
+                <div className="text-[9px] uppercase tracking-[0.15em] mt-2 font-semibold" style={{ color: C.white45, fontFamily: "'JetBrains Mono', monospace" }}>{s.label}</div>
               </div>
             </Reveal>
           ))}
@@ -348,7 +348,7 @@ export default function Page() {
 
         <Reveal>
           <div className="accent-line-center relative z-10">
-            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.orange, fontFamily: "'Space Mono', monospace" }}>Bạn sẽ đạt được</p>
+            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.orange, fontFamily: "'JetBrains Mono', monospace" }}>Bạn sẽ đạt được</p>
           </div>
           <h2 className="text-center text-[25px] font-black leading-tight mb-8 text-white tracking-tight relative z-10">Mục tiêu khoá học</h2>
         </Reveal>
@@ -439,7 +439,7 @@ export default function Page() {
         <Reveal delay={0.15}>
           <div className="flex justify-center mt-8 relative z-10">
             <button className="relative px-9 py-4 rounded-xl font-bold text-[14px] text-white overflow-hidden anim-glow-orange"
-              style={{ background: `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeWarm} 100%)`, fontFamily: "'Syne', sans-serif" }}>
+              style={{ background: `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeWarm} 100%)`, fontFamily: "'Outfit', sans-serif" }}>
               <span className="relative z-10 flex items-center gap-2">Đăng ký ngay <span>→</span></span>
               <div className="absolute inset-0 anim-shimmer" />
             </button>
@@ -462,7 +462,7 @@ export default function Page() {
 
         <Reveal>
           <div className="accent-line-center">
-            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.purpleBright, fontFamily: "'Space Mono', monospace" }}>Phản hồi thực tế</p>
+            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.purpleBright, fontFamily: "'JetBrains Mono', monospace" }}>Phản hồi thực tế</p>
           </div>
           <h2 className="text-center text-[25px] font-black text-white leading-tight mb-2 tracking-tight">
             Ứng dụng AI — <span style={{ color: C.orangeLight }}>Kết quả thật</span>
@@ -556,7 +556,7 @@ export default function Page() {
 
         <Reveal>
           <div className="accent-line-center relative z-10">
-            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.purpleBright, fontFamily: "'Space Mono', monospace" }}>MAXEDU Studio</p>
+            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.purpleBright, fontFamily: "'JetBrains Mono', monospace" }}>MAXEDU Studio</p>
           </div>
           <h2 className="text-center text-[25px] font-black leading-tight mb-1 tracking-tight text-white relative z-10">
             Video AI <span className="text-orange-grad">mọi chủ đề</span>
@@ -584,7 +584,7 @@ export default function Page() {
                     style={{
                       background: `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeWarm} 100%)`,
                       boxShadow: '0 2px 12px rgba(255,107,32,0.4)',
-                      fontFamily: "'Space Mono', monospace",
+                      fontFamily: "'JetBrains Mono', monospace",
                     }}>
                     {String(i + 1).padStart(2, '0')}
                   </div>
@@ -627,7 +627,7 @@ export default function Page() {
 
         <Reveal>
           <div className="accent-line-center">
-            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.purpleLight, fontFamily: "'Space Mono', monospace" }}>Portfolio</p>
+            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.purpleLight, fontFamily: "'JetBrains Mono', monospace" }}>Portfolio</p>
           </div>
           <h2 className="text-center text-[22px] font-black text-white leading-tight mb-8 tracking-tight">
             Tạo ảnh xây nhân hiệu,<br />
@@ -779,7 +779,7 @@ export default function Page() {
         </Reveal>
 
         <div className="mt-14 pt-6 relative z-10" style={{ borderTop: '1px solid rgba(124,58,255,0.15)' }}>
-          <p className="text-[10px] tracking-widest" style={{ color: C.white20, fontFamily: "'Space Mono', monospace" }}>
+          <p className="text-[10px] tracking-widest" style={{ color: C.white20, fontFamily: "'JetBrains Mono', monospace" }}>
             © 2025 MAXEDU · All rights reserved
           </p>
         </div>
