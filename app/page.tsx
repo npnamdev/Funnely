@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { ContactForm } from "@/components/contact-form";
 
-/* ───────────────────────────── helpers ───────────────────────────── */
-function useOnScreen(ref: React.RefObject<HTMLElement | null>, threshold = 0.15) {
+/* ───────────────── scroll-reveal hook ───────────────── */
+function useOnScreen(ref: React.RefObject<HTMLElement | null>, threshold = 0.12) {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (!ref.current) return;
@@ -15,65 +15,49 @@ function useOnScreen(ref: React.RefObject<HTMLElement | null>, threshold = 0.15)
   return visible;
 }
 
-function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+function Reveal({ children, className = '', delay = 0, direction = 'up' }: {
+  children: React.ReactNode; className?: string; delay?: number; direction?: 'up' | 'left' | 'right' | 'scale';
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useOnScreen(ref);
+  const transforms: Record<string, string> = {
+    up: 'translateY(40px)', left: 'translateX(-30px)', right: 'translateX(30px)', scale: 'scale(0.92)',
+  };
   return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(32px)',
-        transition: `opacity 0.7s cubic-bezier(.22,1,.36,1) ${delay}s, transform 0.7s cubic-bezier(.22,1,.36,1) ${delay}s`,
-      }}
-    >
-      {children}
-    </div>
+    <div ref={ref} className={className} style={{
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'none' : transforms[direction],
+      transition: `opacity 0.8s cubic-bezier(.16,1,.3,1) ${delay}s, transform 0.8s cubic-bezier(.16,1,.3,1) ${delay}s`,
+    }}>{children}</div>
   );
 }
 
-/* ───────────────────────── colour tokens ─────────────────────────── */
+/* ───────────────── touch-swipe hook ───────────────── */
+function useSwipe(onSwipeLeft: () => void, onSwipeRight: () => void) {
+  const touchStart = useRef(0);
+  return {
+    onTouchStart: (e: React.TouchEvent) => { touchStart.current = e.touches[0].clientX; },
+    onTouchEnd: (e: React.TouchEvent) => {
+      const diff = touchStart.current - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) diff > 0 ? onSwipeLeft() : onSwipeRight();
+    },
+  };
+}
+
+/* ───────────────── colour system ───────────────── */
 const C = {
-  purple: '#5712a8',
-  purpleLight: '#7b3fe0',
-  purpleDark: '#3d0b78',
-  orange: '#f06223',
-  orangeLight: '#ff8a50',
-  orangeDark: '#c44a15',
-  cream: '#faf6f1',
-  dark: '#1a1025',
+  purple: '#5712a8', purpleLight: '#7b3fe0', purpleDark: '#3d0b78', purpleDeep: '#2a0660',
+  orange: '#f06223', orangeLight: '#ff8a50', orangeWarm: '#ff6b35', orangeDark: '#c44a15',
+  cream: '#fdfaf6', dark: '#0f0a18', darkCard: '#1a1025',
 };
 
-/* ───────────────────────── objectives data ───────────────────────── */
+/* ───────────────── data (unchanged) ───────────────── */
 const objectives = [
-  {
-    icon: '🚀',
-    title: 'TĂNG TỐC CÔNG VIỆC',
-    items: [
-      'Ứng dụng AI trong sáng tạo, Marketing, phân tích dữ liệu và ra chiến lược quyết định',
-      'Giảm 80% làm việc thủ công, tập trung vào việc tạo giá trị thực',
-    ],
-  },
-  {
-    icon: '💡',
-    title: 'LÀM CHỦ CÔNG NGHỆ AI',
-    items: [
-      'Nắm vững ChatGPT, Midjourney, Runway và hàng chục công cụ AI hàng đầu',
-      'Tự tin áp dụng AI vào mọi lĩnh vực từ content, design đến kinh doanh',
-    ],
-  },
-  {
-    icon: '💰',
-    title: 'TĂNG THU NHẬP BỀN VỮNG',
-    items: [
-      'Xây dựng kênh Affiliate hiệu quả với video viral AI',
-      'Tạo sản phẩm số, dịch vụ AI Freelance & cơ hội nghề nghiệp mới',
-    ],
-  },
+  { icon: '🚀', title: 'TĂNG TỐC CÔNG VIỆC', items: ['Ứng dụng AI trong sáng tạo, Marketing, phân tích dữ liệu và ra chiến lược quyết định', 'Giảm 80% làm việc thủ công, tập trung vào việc tạo giá trị thực'] },
+  { icon: '💡', title: 'LÀM CHỦ CÔNG NGHỆ AI', items: ['Nắm vững ChatGPT, Midjourney, Runway và hàng chục công cụ AI hàng đầu', 'Tự tin áp dụng AI vào mọi lĩnh vực từ content, design đến kinh doanh'] },
+  { icon: '💰', title: 'TĂNG THU NHẬP BỀN VỮNG', items: ['Xây dựng kênh Affiliate hiệu quả với video viral AI', 'Tạo sản phẩm số, dịch vụ AI Freelance & cơ hội nghề nghiệp mới'] },
 ];
 
-/* ───────────────────────── testimonials ──────────────────────────── */
 const testimonials = [
   { name: 'Minh Tuấn', role: 'Marketing Manager', quote: 'Sau khoá học, tôi tiết kiệm 15 giờ/tuần nhờ AI tự động hoá content.' },
   { name: 'Thanh Hà', role: 'Freelancer', quote: 'Thu nhập tăng 3x chỉ sau 2 tháng áp dụng AI vào thiết kế.' },
@@ -85,7 +69,6 @@ const testimonials = [
   { name: 'Phương Linh', role: 'Designer', quote: 'Midjourney đã thay đổi hoàn toàn workflow thiết kế của tôi.' },
 ];
 
-/* ───────────────────────── videos data ───────────────────────────── */
 const videos = [
   { id: 'XwUPz7MhvjQ', title: 'Tạo video AI từ A-Z' },
   { id: 'XwUPz7MhvjQ', title: 'Làm content với ChatGPT' },
@@ -95,17 +78,8 @@ const videos = [
   { id: 'XwUPz7MhvjQ', title: 'Midjourney nâng cao' },
 ];
 
-/* ───────────────────────── gallery images ────────────────────────── */
-const galleryImages = [
-  'https://via.placeholder.com/400x500/5712a8/ffffff?text=Poster+1',
-  'https://via.placeholder.com/400x350/f06223/ffffff?text=Brand+2',
-  'https://via.placeholder.com/400x450/7b3fe0/ffffff?text=Design+3',
-  'https://via.placeholder.com/400x380/c44a15/ffffff?text=Banner+4',
-  'https://via.placeholder.com/400x420/3d0b78/ffffff?text=Social+5',
-  'https://via.placeholder.com/400x360/ff8a50/ffffff?text=Cover+6',
-];
+const galleryImages = Array.from({ length: 6 });
 
-/* ───────────────────────── stats ─────────────────────────────────── */
 const stats = [
   { value: '5,000+', label: 'Học viên' },
   { value: '98%', label: 'Hài lòng' },
@@ -113,536 +87,400 @@ const stats = [
   { value: '3x', label: 'Tăng thu nhập' },
 ];
 
-/* ═══════════════════════════ COMPONENT ═══════════════════════════ */
+/* ═══════════════════════ PAGE ═══════════════════════ */
 export default function Page() {
   const [testimonialIdx, setTestimonialIdx] = useState(0);
-  const [showVideos, setShowVideos] = useState(3); // show 3 initially
+  const [showVideos, setShowVideos] = useState(3);
   const [activeTab, setActiveTab] = useState(0);
   const [gallerySlideIdx, setGallerySlideIdx] = useState(0);
 
-  // Auto-play testimonials
-  useEffect(() => {
-    const t = setInterval(() => setTestimonialIdx(p => (p + 1) % testimonials.length), 4000);
-    return () => clearInterval(t);
-  }, []);
+  const nextTestimonial = useCallback(() => setTestimonialIdx(p => (p + 1) % testimonials.length), []);
+  const prevTestimonial = useCallback(() => setTestimonialIdx(p => (p - 1 + testimonials.length) % testimonials.length), []);
+  const testimonialSwipe = useSwipe(nextTestimonial, prevTestimonial);
 
-  // Auto-play gallery slider
-  useEffect(() => {
-    const g = setInterval(() => setGallerySlideIdx(p => (p + 1) % 8), 3000);
-    return () => clearInterval(g);
-  }, []);
+  const nextGallery = useCallback(() => setGallerySlideIdx(p => (p + 1) % 8), []);
+  const prevGallery = useCallback(() => setGallerySlideIdx(p => (p - 1 + 8) % 8), []);
+  const gallerySwipe = useSwipe(nextGallery, prevGallery);
+
+  useEffect(() => { const t = setInterval(nextTestimonial, 4500); return () => clearInterval(t); }, [nextTestimonial]);
+  useEffect(() => { const t = setInterval(nextGallery, 3500); return () => clearInterval(t); }, [nextGallery]);
+  useEffect(() => { const t = setInterval(() => setActiveTab(p => (p + 1) % 3), 5000); return () => clearInterval(t); }, []);
 
   return (
-    <div className="max-w-[430px] mx-auto overflow-hidden" style={{ fontFamily: "'Lexend', sans-serif" }}>
-      {/* Google Font */}
+    <div className="max-w-[430px] mx-auto overflow-hidden" style={{ fontFamily: "'Sora', sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+        .font-mono { font-family: 'DM Mono', monospace; }
 
-        .font-mono-alt { font-family: 'Space Mono', monospace; }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+        @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+        @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes gradient-x { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+        @keyframes glow-pulse { 0%,100%{box-shadow:0 0 20px rgba(240,98,35,0.3)} 50%{box-shadow:0 0 40px rgba(240,98,35,0.6)} }
+        @keyframes border-glow { 0%,100%{border-color:rgba(255,138,80,0.3)} 50%{border-color:rgba(255,138,80,0.7)} }
 
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
-        }
-        @keyframes pulse-ring {
-          0% { transform: scale(0.9); opacity: 0.6; }
-          100% { transform: scale(1.4); opacity: 0; }
-        }
-        @keyframes shimmer {
-          0% { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        @keyframes gradient-shift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
+        .anim-float { animation: float 3s ease-in-out infinite; }
+        .anim-shimmer { background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent); background-size:200% 100%; animation:shimmer 2.5s infinite; }
+        .anim-marquee { animation: marquee 25s linear infinite; }
+        .anim-gradient { background-size:200% 200%; animation:gradient-x 4s ease infinite; }
+        .anim-glow { animation: glow-pulse 2s ease-in-out infinite; }
+        .anim-border-glow { animation: border-glow 2s ease-in-out infinite; }
 
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animate-shimmer {
-          background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-          background-size: 200% 100%;
-          animation: shimmer 2s infinite;
-        }
-        .animate-marquee { animation: marquee 20s linear infinite; }
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient-shift 4s ease infinite;
-        }
+        .glass { backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); }
+        .glass-strong { backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.15); }
 
-        .glass {
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          background: rgba(255,255,255,0.08);
-          border: 1px solid rgba(255,255,255,0.12);
-        }
+        .scroll-hide::-webkit-scrollbar{display:none} .scroll-hide{-ms-overflow-style:none;scrollbar-width:none}
 
-        .card-hover {
-          transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s ease;
-        }
-        .card-hover:active {
-          transform: scale(0.97);
-        }
+        .bg-dots { background-image:radial-gradient(rgba(255,255,255,0.06) 1px,transparent 1px); background-size:24px 24px; }
 
-        .dot-pattern {
-          background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-          background-size: 20px 20px;
-        }
-
-        .noise-overlay::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          opacity: 0.03;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-          pointer-events: none;
-        }
-
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .tab-active { box-shadow:0 8px 32px rgba(240,98,35,0.15), 0 0 0 1px rgba(240,98,35,0.2); }
       `}</style>
 
-      {/* ─── HERO ─── */}
-      <section className="relative w-full overflow-hidden">
-        <img
-          src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772012420/demo/45_k9GZXXLBqtavWsW3Y-original.png.png"
-          alt="Hero Banner"
-          className="w-full h-auto object-cover"
-        />
-        {/* Gradient overlay at bottom for smooth transition */}
-        <div
-          className="absolute bottom-0 left-0 right-0 h-24"
-          style={{ background: `linear-gradient(to top, ${C.purple}, transparent)` }}
-        />
+      {/* ════════════ HERO ════════════ */}
+      <section className="relative w-full">
+        <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772012420/demo/45_k9GZXXLBqtavWsW3Y-original.png.png"
+          alt="Hero Banner" className="w-full h-auto block" />
+        <div className="absolute bottom-0 inset-x-0 h-32" style={{ background: `linear-gradient(to top, ${C.dark}, transparent)` }} />
       </section>
 
-      {/* ─── MARQUEE STRIP ─── */}
-      <div style={{ background: C.orange }} className="py-2.5 overflow-hidden">
-        <div className="animate-marquee whitespace-nowrap flex gap-8">
-          {[...Array(2)].map((_, i) => (
-            <span key={i} className="inline-flex gap-8 text-white font-bold text-xs tracking-widest uppercase">
-              <span>🔥 Ưu đãi có hạn</span>
-              <span>⚡ Học AI thực chiến</span>
-              <span>🚀 Tăng thu nhập 3x</span>
-              <span>💡 5000+ học viên</span>
-              <span>🔥 Ưu đãi có hạn</span>
-              <span>⚡ Học AI thực chiến</span>
-              <span>🚀 Tăng thu nhập 3x</span>
-              <span>💡 5000+ học viên</span>
+      {/* ════════════ MARQUEE ════════════ */}
+      <div style={{ background: C.orange }} className="py-2 overflow-hidden">
+        <div className="anim-marquee whitespace-nowrap flex">
+          {[0,1].map(i => (
+            <span key={i} className="inline-flex gap-6 text-white font-semibold text-[11px] tracking-[0.15em] uppercase px-3">
+              <span>🔥 Ưu đãi có hạn</span><span>⚡ Học AI thực chiến</span>
+              <span>🚀 Tăng thu nhập 3x</span><span>💡 5000+ học viên</span>
+              <span>🔥 Ưu đãi có hạn</span><span>⚡ Học AI thực chiến</span>
+              <span>🚀 Tăng thu nhập 3x</span><span>💡 5000+ học viên</span>
             </span>
           ))}
         </div>
       </div>
 
-      {/* ─── CONTACT FORM 1 ─── */}
-      <section
-        className="relative px-5 py-10 noise-overlay"
-        style={{ background: `linear-gradient(135deg, ${C.purple} 0%, ${C.purpleDark} 100%)` }}
-      >
-        <FadeIn>
-          <div className="text-center mb-8">
-            <span
-              className="inline-block px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase mb-4"
-              style={{ background: 'rgba(255,255,255,0.12)', color: C.orangeLight, border: '1px solid rgba(255,255,255,0.1)' }}
-            >
+      {/* ════════════ FORM 1 ════════════ */}
+      <section className="relative px-5 pt-10 pb-12 bg-dots" style={{ background: C.dark }}>
+        <div className="absolute top-10 -left-20 w-40 h-40 rounded-full opacity-20 blur-3xl" style={{ background: C.purple }} />
+        <div className="absolute bottom-10 -right-16 w-36 h-36 rounded-full opacity-15 blur-3xl" style={{ background: C.orange }} />
+
+        <Reveal>
+          <div className="text-center mb-8 relative z-10">
+            <span className="inline-block px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.2em] uppercase mb-5 anim-border-glow"
+              style={{ color: C.orangeLight, border: '1.5px solid rgba(255,138,80,0.4)', background: 'rgba(240,98,35,0.08)' }}>
               Đăng ký ngay hôm nay
             </span>
-            <h2 className="text-2xl font-extrabold text-white leading-tight">
-              Đăng ký nhận <br />
-              <span style={{ color: C.orangeLight }}>nhiều ưu đãi hấp dẫn</span>
+            <h2 className="text-[26px] font-extrabold text-white leading-[1.25]">
+              Đăng ký nhận<br />
+              <span className="anim-gradient" style={{
+                background: `linear-gradient(135deg, ${C.orangeLight}, ${C.orange}, ${C.orangeLight})`,
+                backgroundSize: '200% 200%', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              }}>nhiều ưu đãi hấp dẫn</span>
             </h2>
           </div>
-        </FadeIn>
-        <FadeIn delay={0.15}>
-          <div className="glass rounded-2xl p-5">
-            <ContactForm />
-          </div>
-        </FadeIn>
+        </Reveal>
+        <Reveal delay={0.12}>
+          <div className="glass rounded-3xl p-5 relative z-10"><ContactForm /></div>
+        </Reveal>
       </section>
 
-      {/* ─── STATS BAR ─── */}
-      <section
-        className="grid grid-cols-4 gap-0"
-        style={{ background: C.dark }}
-      >
+      {/* ════════════ STATS ════════════ */}
+      <section className="grid grid-cols-4" style={{ background: C.purpleDark }}>
         {stats.map((s, i) => (
-          <FadeIn key={i} delay={i * 0.08}>
-            <div className="py-5 text-center border-r border-white/10 last:border-r-0">
-              <div className="font-mono-alt text-lg font-bold" style={{ color: C.orangeLight }}>{s.value}</div>
-              <div className="text-[10px] text-white/50 uppercase tracking-wider mt-1">{s.label}</div>
+          <Reveal key={i} delay={i * 0.06} direction="scale">
+            <div className="py-5 text-center" style={{ borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
+              <div className="font-mono text-[17px] font-bold" style={{ color: C.orangeLight }}>{s.value}</div>
+              <div className="text-[9px] text-white/40 uppercase tracking-[0.15em] mt-1.5 font-medium">{s.label}</div>
             </div>
-          </FadeIn>
+          </Reveal>
         ))}
       </section>
 
-      {/* ─── OBJECTIVES (No slider — stacked cards with tabs) ─── */}
-      <section className="relative px-5 py-10" style={{ background: C.cream }}>
-        <FadeIn>
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-extrabold leading-tight" style={{ color: C.dark }}>
-              Mục tiêu <span style={{ color: C.purple }}>khoá học</span>
-            </h2>
-            <div className="w-12 h-1 rounded-full mx-auto mt-3" style={{ background: C.orange }} />
-          </div>
-        </FadeIn>
+      {/* ════════════ OBJECTIVES ════════════ */}
+      <section className="px-5 py-10" style={{ background: C.cream }}>
+        <Reveal>
+          <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-2" style={{ color: C.orange }}>Bạn sẽ đạt được</p>
+          <h2 className="text-center text-[24px] font-extrabold leading-tight mb-8" style={{ color: C.dark }}>Mục tiêu khoá học</h2>
+        </Reveal>
 
-        {/* Tab buttons */}
-        <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
+        <div className="flex gap-2 mb-6 overflow-x-auto scroll-hide pb-1">
           {objectives.map((obj, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveTab(i)}
-              className="flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300"
+            <button key={i} onClick={() => setActiveTab(i)}
+              className="flex-shrink-0 px-4 py-2.5 rounded-2xl text-[11px] font-bold transition-all duration-400 whitespace-nowrap"
               style={{
-                background: activeTab === i ? C.purple : 'white',
+                background: activeTab === i ? `linear-gradient(135deg, ${C.purple}, ${C.purpleLight})` : 'white',
                 color: activeTab === i ? 'white' : C.purple,
-                border: `2px solid ${C.purple}`,
-              }}
-            >
+                boxShadow: activeTab === i ? '0 4px 16px rgba(87,18,168,0.3)' : '0 1px 4px rgba(0,0,0,0.06)',
+              }}>
               {obj.icon} {obj.title.split(' ').slice(0, 2).join(' ')}
             </button>
           ))}
         </div>
 
-        {/* Active tab content */}
-        {objectives.map((obj, i) => (
-          <div
-            key={i}
-            className="transition-all duration-500"
-            style={{
-              display: activeTab === i ? 'block' : 'none',
-              opacity: activeTab === i ? 1 : 0,
-            }}
-          >
-            <div
-              className="rounded-2xl p-6 card-hover"
-              style={{
-                background: 'white',
-                boxShadow: '0 4px 24px rgba(87,18,168,0.08)',
-                borderLeft: `4px solid ${C.purple}`,
-              }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl">{obj.icon}</span>
-                <h3 className="text-base font-extrabold" style={{ color: C.dark }}>{obj.title}</h3>
-              </div>
-              <div className="space-y-3">
-                {obj.items.map((item, j) => (
-                  <div key={j} className="flex items-start gap-3">
-                    <div
-                      className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                      style={{ background: `${C.purple}15` }}
-                    >
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M2 6L5 9L10 3" stroke={C.purple} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+        <div className="relative" style={{ minHeight: 180 }}>
+          {objectives.map((obj, i) => (
+            <div key={i} style={{
+              position: activeTab === i ? 'relative' : 'absolute', top: 0, left: 0, right: 0,
+              opacity: activeTab === i ? 1 : 0, transform: activeTab === i ? 'translateX(0)' : 'translateX(20px)',
+              transition: 'opacity 0.5s ease, transform 0.5s ease', pointerEvents: activeTab === i ? 'auto' : 'none',
+            }}>
+              <div className="rounded-3xl p-6 tab-active" style={{ background: 'white' }}>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+                    style={{ background: `linear-gradient(135deg, ${C.purple}15, ${C.orange}10)` }}>{obj.icon}</div>
+                  <h3 className="text-[15px] font-extrabold" style={{ color: C.dark }}>{obj.title}</h3>
+                </div>
+                <div className="space-y-3.5">
+                  {obj.items.map((item, j) => (
+                    <div key={j} className="flex gap-3">
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                        style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.orangeLight})` }}>
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                          <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                      <p className="text-[13px] text-gray-600 leading-relaxed">{item}</p>
                     </div>
-                    <p className="text-sm text-gray-600 leading-relaxed">{item}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        <FadeIn delay={0.2}>
+        <Reveal delay={0.15}>
           <div className="flex justify-center mt-8">
-            <button
-              className="group relative px-8 py-3.5 rounded-full font-bold text-sm text-white overflow-hidden animate-gradient"
-              style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.orangeLight}, ${C.orange})`, backgroundSize: '200% 200%' }}
-            >
+            <button className="relative px-8 py-3.5 rounded-2xl font-bold text-[13px] text-white overflow-hidden anim-glow"
+              style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.orangeWarm})` }}>
               <span className="relative z-10">Đăng ký ngay →</span>
-              <div className="absolute inset-0 animate-shimmer" />
+              <div className="absolute inset-0 anim-shimmer" />
             </button>
           </div>
-        </FadeIn>
+        </Reveal>
       </section>
 
-      {/* ─── TESTIMONIALS (Slider — makes sense for 8 items) ─── */}
-      <section
-        className="relative px-5 py-10 noise-overlay dot-pattern"
-        style={{ background: `linear-gradient(180deg, ${C.dark} 0%, ${C.purpleDark} 100%)` }}
-      >
-        <FadeIn>
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-extrabold text-white leading-tight">
-              Ứng dụng AI — <span style={{ color: C.orangeLight }}>Kết quả thật</span>
-            </h2>
-            <p className="text-sm text-white/50 mt-3 leading-relaxed">
-              Hàng trăm học viên đã ứng dụng AI để tiết kiệm thời gian và tăng thu nhập
-            </p>
-          </div>
-        </FadeIn>
+      {/* ════════════ TESTIMONIALS ════════════ */}
+      <section className="relative px-5 py-10 bg-dots" style={{ background: `linear-gradient(170deg, ${C.dark} 0%, ${C.purpleDeep} 100%)` }}>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-10 blur-[80px]" style={{ background: C.purple }} />
 
-        <FadeIn delay={0.15}>
-          <div className="relative">
-            <div className="overflow-hidden rounded-2xl">
-              <div
-                className="flex transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)]"
-                style={{ transform: `translateX(-${testimonialIdx * 100}%)` }}
-              >
+        <Reveal>
+          <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-2" style={{ color: C.orangeLight }}>Phản hồi thực tế</p>
+          <h2 className="text-center text-[24px] font-extrabold text-white leading-tight mb-2">Ứng dụng AI — Kết quả thật</h2>
+          <p className="text-center text-[12px] text-white/40 mb-8 max-w-[300px] mx-auto leading-relaxed">
+            Hàng trăm học viên đã ứng dụng AI để tiết kiệm thời gian và tăng thu nhập
+          </p>
+        </Reveal>
+
+        <Reveal delay={0.1}>
+          <div className="relative" {...testimonialSwipe}>
+            <div className="overflow-hidden rounded-3xl">
+              <div className="flex transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)]"
+                style={{ transform: `translateX(-${testimonialIdx * 100}%)` }}>
                 {testimonials.map((t, i) => (
-                  <div key={i} className="w-full flex-shrink-0 px-1">
-                    <div className="glass rounded-2xl overflow-hidden">
-                      <img
-                        src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014033/demo/9fb42a7a2eb8a0e6f9a9.jpg.jpg"
-                        alt="Testimonial"
-                        className="w-full h-auto object-cover"
-                      />
+                  <div key={i} className="w-full flex-shrink-0 px-0.5">
+                    <div className="glass-strong rounded-3xl overflow-hidden">
+                      <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014033/demo/9fb42a7a2eb8a0e6f9a9.jpg.jpg"
+                        alt="Testimonial" className="w-full h-auto object-cover" />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Dots */}
-            <div className="flex justify-center gap-1.5 mt-5">
+            <div className="flex justify-center gap-1.5 mt-6">
               {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setTestimonialIdx(i)}
-                  className="h-1.5 rounded-full transition-all duration-500"
+                <button key={i} onClick={() => setTestimonialIdx(i)} className="h-[5px] rounded-full transition-all duration-500"
                   style={{
-                    width: testimonialIdx === i ? 24 : 6,
-                    background: testimonialIdx === i ? C.orange : 'rgba(255,255,255,0.2)',
-                  }}
-                />
+                    width: testimonialIdx === i ? 28 : 5,
+                    background: testimonialIdx === i ? `linear-gradient(90deg, ${C.orange}, ${C.orangeLight})` : 'rgba(255,255,255,0.15)',
+                  }} />
               ))}
             </div>
-            <div className="flex justify-center mt-6">
-              <button
-                className="px-8 py-3 bg-white text-purple-600 font-bold rounded-xl hover:bg-gray-100 transition-colors"
-              >
-                Đăng ký ngay
-              </button>
-            </div>
           </div>
-        </FadeIn>
+        </Reveal>
+
+        <Reveal delay={0.2}>
+          <div className="flex justify-center mt-7">
+            <button className="px-8 py-3 rounded-2xl font-bold text-[13px] transition-all"
+              style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1.5px solid rgba(255,255,255,0.15)' }}>
+              Đăng ký ngay
+            </button>
+          </div>
+        </Reveal>
       </section>
 
-      {/* ─── CONTACT FORM 2 ─── */}
-      <section
-        className="relative px-5 py-10"
-        style={{ background: `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeDark} 100%)` }}
-      >
-        <FadeIn>
-          <div className="text-center mb-8">
-            <div className="animate-float inline-block text-4xl mb-3">📚</div>
-            <h2 className="text-xl font-extrabold text-white leading-tight">
-              Điền thông tin bên dưới<br />
-              <span className="font-light opacity-80">để nhận tài liệu miễn phí</span>
-            </h2>
+      {/* ════════════ FORM 2 ════════════ */}
+      <section className="relative px-5 py-10 overflow-hidden"
+        style={{ background: `linear-gradient(145deg, ${C.orange} 0%, ${C.orangeDark} 100%)` }}>
+        <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full opacity-20" style={{ background: 'white' }} />
+        <Reveal>
+          <div className="text-center mb-8 relative z-10">
+            <div className="anim-float inline-block text-4xl mb-3">📚</div>
+            <h2 className="text-[22px] font-extrabold text-white leading-tight">Điền thông tin bên dưới</h2>
+            <p className="text-[14px] text-white/70 mt-1 font-light">để nhận tài liệu miễn phí</p>
           </div>
-        </FadeIn>
-        <FadeIn delay={0.15}>
-          <div
-            className="rounded-2xl p-5"
-            style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.2)' }}
-          >
-            <ContactForm />
-          </div>
-        </FadeIn>
+        </Reveal>
+        <Reveal delay={0.12}>
+          <div className="glass-strong rounded-3xl p-5 relative z-10"><ContactForm /></div>
+        </Reveal>
       </section>
 
-      {/* ─── VIDEOS (Grid with "show more" — no slider) ─── */}
+      {/* ════════════ VIDEOS ════════════ */}
       <section className="px-5 py-10" style={{ background: C.cream }}>
-        <FadeIn>
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-extrabold leading-tight" style={{ color: C.dark }}>
-              Video AI <span style={{ color: C.orange }}>mọi chủ đề</span>
-            </h2>
-            <p className="text-xs text-gray-500 mt-2">Học viên MAXEDU tạo ra bằng kỹ năng AI</p>
-          </div>
-        </FadeIn>
+        <Reveal>
+          <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-2" style={{ color: C.purple }}>MAXEDU Studio</p>
+          <h2 className="text-center text-[24px] font-extrabold leading-tight mb-1" style={{ color: C.dark }}>
+            Video AI <span style={{ color: C.orange }}>mọi chủ đề</span>
+          </h2>
+          <p className="text-center text-[11px] text-gray-400 mb-8">Học viên MAXEDU tạo ra bằng kỹ năng AI</p>
+        </Reveal>
 
         <div className="space-y-4">
           {videos.slice(0, showVideos).map((v, i) => (
-            <FadeIn key={i} delay={i * 0.08}>
-              <div className="rounded-2xl overflow-hidden card-hover" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
-                <div className="relative bg-black">
-                  <iframe
-                    width="100%"
-                    height="200"
-                    src={`https://www.youtube.com/embed/${v.id}`}
-                    title={v.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    loading="lazy"
-                    className="block"
-                  />
+            <Reveal key={i} delay={i * 0.06}>
+              <div className="rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.05)' }}>
+                <div className="bg-black">
+                  <iframe width="100%" height="200" src={`https://www.youtube.com/embed/${v.id}`}
+                    title={v.title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen loading="lazy" className="block" />
                 </div>
                 <div className="bg-white px-4 py-3 flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                    style={{ background: C.purple }}
-                  >
-                    {i + 1}
-                  </div>
-                  <span className="text-sm font-semibold" style={{ color: C.dark }}>{v.title}</span>
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
+                    style={{ background: `linear-gradient(135deg, ${C.purple}, ${C.purpleLight})` }}>{i + 1}</div>
+                  <span className="text-[13px] font-semibold" style={{ color: C.dark }}>{v.title}</span>
                 </div>
               </div>
-            </FadeIn>
+            </Reveal>
           ))}
         </div>
 
         {showVideos < videos.length && (
-          <FadeIn>
+          <Reveal>
             <div className="flex justify-center mt-6">
-              <button
-                onClick={() => setShowVideos(videos.length)}
-                className="px-6 py-3 rounded-full text-sm font-bold transition-all duration-300"
-                style={{ background: 'white', color: C.purple, border: `2px solid ${C.purple}`, boxShadow: '0 2px 12px rgba(87,18,168,0.1)' }}
-              >
+              <button onClick={() => setShowVideos(videos.length)}
+                className="px-6 py-3 rounded-2xl text-[12px] font-bold transition-all"
+                style={{ background: 'white', color: C.purple, border: `2px solid ${C.purple}20`, boxShadow: '0 2px 12px rgba(87,18,168,0.08)' }}>
                 Xem thêm {videos.length - showVideos} video ↓
               </button>
             </div>
-          </FadeIn>
+          </Reveal>
         )}
       </section>
 
-      {/* ─── GALLERY (Masonry grid — no slider) ─── */}
-      <section
-        className="relative px-5 py-10 noise-overlay"
-        style={{ background: `linear-gradient(135deg, ${C.purple} 0%, ${C.purpleDark} 100%)` }}
-      >
-        <FadeIn>
-          <div className="text-center mb-8">
-            <h2 className="text-xl font-extrabold text-white leading-tight">
-              Tạo ảnh xây nhân hiệu cá nhân,<br />
-              <span style={{ color: C.orangeLight }}>poster & phục vụ công việc</span>
-            </h2>
-          </div>
-        </FadeIn>
+      {/* ════════════ GALLERY GRID ════════════ */}
+      <section className="relative px-5 py-10 bg-dots"
+        style={{ background: `linear-gradient(160deg, ${C.purple} 0%, ${C.purpleDeep} 100%)` }}>
+        <Reveal>
+          <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-2" style={{ color: C.orangeLight }}>Portfolio</p>
+          <h2 className="text-center text-[22px] font-extrabold text-white leading-tight mb-8">
+            Tạo ảnh xây nhân hiệu,<br /><span style={{ color: C.orangeLight }}>poster & phục vụ công việc</span>
+          </h2>
+        </Reveal>
 
-        {/* Masonry-ish 2 col grid */}
         <div className="grid grid-cols-2 gap-3">
           {galleryImages.map((_, i) => (
-            <FadeIn key={i} delay={i * 0.08}>
-              <div className="rounded-xl overflow-hidden card-hover" style={{ aspectRatio: '3/4' }}>
-                <img
-                  src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014034/demo/212973ed772ff971a03e.jpg.jpg"
-                  alt={`Gallery ${i + 1}`}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+            <Reveal key={i} delay={i * 0.06} direction="scale">
+              <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: i % 2 === 0 ? '3/4' : '1/1', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
+                <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014034/demo/212973ed772ff971a03e.jpg.jpg"
+                  alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
               </div>
-            </FadeIn>
+            </Reveal>
           ))}
         </div>
 
-        <FadeIn delay={0.3}>
+        <Reveal delay={0.25}>
           <div className="flex justify-center mt-8">
-            <button
-              className="group relative px-8 py-3.5 rounded-full font-bold text-sm overflow-hidden"
-              style={{ background: C.orange, color: 'white' }}
-            >
+            <button className="relative px-8 py-3.5 rounded-2xl font-bold text-[13px] overflow-hidden"
+              style={{ background: C.orange, color: 'white', boxShadow: '0 4px 20px rgba(240,98,35,0.4)' }}>
               <span className="relative z-10">Thực chiến tạo video viral 🔥</span>
-              <div className="absolute inset-0 animate-shimmer" />
+              <div className="absolute inset-0 anim-shimmer" />
             </button>
           </div>
-        </FadeIn>
+        </Reveal>
       </section>
 
-      {/* ─── GALLERY SLIDER ─── */}
-      <section className="relative overflow-hidden">
-        <div className="flex transition-transform duration-500" style={{ transform: `translateX(-${gallerySlideIdx * 100}%)` }}>
+      {/* ════════════ GALLERY SLIDER ════════════ */}
+      <section className="relative" style={{ background: C.dark }} {...gallerySwipe}>
+        <div className="overflow-hidden">
+          <div className="flex transition-transform duration-600 ease-[cubic-bezier(.16,1,.3,1)]"
+            style={{ transform: `translateX(-${gallerySlideIdx * 100}%)` }}>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="w-full flex-shrink-0">
+                <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014033/demo/d5afc963f3a17dff24b0.jpg.jpg"
+                  alt={`Gallery Slide ${i + 1}`} className="w-full h-auto block" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex justify-center gap-1.5 py-5" style={{ background: C.dark }}>
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="w-full flex-shrink-0">
-              <img
-                src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014033/demo/d5afc963f3a17dff24b0.jpg.jpg"
-                alt={`Gallery Slide ${i + 1}`}
-                className="w-full h-auto object-cover"
-              />
-            </div>
+            <button key={i} onClick={() => setGallerySlideIdx(i)} className="h-[5px] rounded-full transition-all duration-500"
+              style={{
+                width: gallerySlideIdx === i ? 28 : 5,
+                background: gallerySlideIdx === i ? `linear-gradient(90deg, ${C.orange}, ${C.orangeLight})` : 'rgba(255,255,255,0.12)',
+              }} />
           ))}
         </div>
-        <div className="flex justify-center gap-2 py-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setGallerySlideIdx(i)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                gallerySlideIdx === i ? 'bg-white w-6' : 'bg-white/50'
-              }`}
-            />
-          ))}
+      </section>
+
+      {/* ════════════ GUIDE IMAGE ════════════ */}
+      <section style={{ background: C.dark }}>
+        <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014590/demo/khoa_co_ban_video_399k_ypvGvvLkRBS79hp5F-original.jpg.jpg"
+          alt="Hướng dẫn đăng ký" className="w-full h-auto block" />
+        <div className="px-5 py-6" style={{ background: C.dark }}>
+          <Reveal>
+            <button className="w-full py-4 rounded-2xl font-bold text-[12px] leading-snug anim-gradient"
+              style={{ background: 'linear-gradient(135deg, #FFD700, #FFA500, #FFD700)', backgroundSize: '200% 200%', color: C.dark }}>
+              HƯỚNG DẪN CHI TIẾT CÁC BƯỚC ĐĂNG KÝ<br />NHẬN TÀI LIỆU MIỄN PHÍ TẠI MAXEDU
+            </button>
+          </Reveal>
         </div>
       </section>
 
-      {/* ─── GUIDE IMAGE SECTION ─── */}
-      <section className="relative overflow-hidden">
-        <img
-          src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014590/demo/khoa_co_ban_video_399k_ypvGvvLkRBS79hp5F-original.jpg.jpg"
-          alt="Hướng dẫn đăng ký"
-          className="w-full h-auto"
-        />
-        <div className="flex justify-center py-6" style={{ background: C.dark }}>
-          <button
-            className="px-8 py-3 font-bold text-sm rounded-xl animate-gradient"
-            style={{ background: `linear-gradient(135deg, #FFD700, #FFA500, #FFD700)`, backgroundSize: '200% 200%', color: '#1a1025' }}
-          >
-            HƯỚNG DẪN CHI TIẾT CÁC BƯỚC ĐĂNG KÝ NHẬN TÀI LIỆU MIỄN PHÍ TẠI MAXEDU
-          </button>
-        </div>
-      </section>
+      {/* ════════════ ORANGE CTA + FORM 3 ════════════ */}
+      <section className="relative px-5 py-10 overflow-hidden"
+        style={{ background: `linear-gradient(150deg, ${C.orange} 0%, ${C.orangeDark} 60%, ${C.purpleDark} 100%)` }}>
+        <div className="absolute -bottom-32 -left-32 w-64 h-64 rounded-full opacity-15 blur-3xl" style={{ background: C.purple }} />
 
-      {/* ─── ORANGE CTA SECTION ─── */}
-      <section
-        className="relative px-5 py-10"
-        style={{ background: `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeDark} 100%)` }}
-      >
-        <FadeIn>
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-extrabold text-white leading-tight mb-2">
-              39 XUẤT HỌC VỚI GIÁ ƯU ĐÃI VÀ QUÀ TẶNG ĐẶC BIỆT
+        <Reveal>
+          <div className="text-center mb-4 relative z-10">
+            <span className="inline-block px-5 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase mb-4"
+              style={{ background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}>
+              ⏰ Cơ hội cuối cùng
+            </span>
+            <h2 className="text-[24px] font-extrabold text-white leading-tight">
+              39 XUẤT HỌC VỚI GIÁ<br />ƯU ĐÃI & QUÀ TẶNG
             </h2>
-            <p className="text-lg font-bold text-white/90">Chỉ còn 39 xuất cuối cùng</p>
+            <p className="text-[15px] font-semibold text-white/80 mt-3">Chỉ còn 39 xuất cuối cùng</p>
           </div>
-        </FadeIn>
+        </Reveal>
 
-        <img
-          src="https://www.facebook.com/HongNguyenAI16"
-          alt="Facebook"
-          className="w-full h-auto rounded-xl mb-6"
-        />
-
-        <FadeIn delay={0.15}>
-          <div
-            className="rounded-2xl p-5"
-            style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.2)' }}
-          >
-            <ContactForm />
-          </div>
-        </FadeIn>
+        <Reveal delay={0.12}>
+          <div className="glass-strong rounded-3xl p-5 relative z-10 mt-6"><ContactForm /></div>
+        </Reveal>
       </section>
 
-      {/* ─── FINAL CTA ─── */}
-      <section
-        className="relative px-5 py-12 text-center"
-        style={{ background: C.dark }}
-      >
-        <FadeIn>
-          <div className="animate-float inline-block text-5xl mb-4">🎯</div>
-          <h2 className="text-2xl font-extrabold text-white leading-tight mb-3">
+      {/* ════════════ FINAL CTA ════════════ */}
+      <section className="relative px-5 py-14 text-center bg-dots" style={{ background: C.dark }}>
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full opacity-10 blur-[60px]" style={{ background: C.orange }} />
+
+        <Reveal>
+          <div className="anim-float inline-block text-5xl mb-5">🎯</div>
+          <h2 className="text-[26px] font-extrabold text-white leading-[1.2] mb-3">
             Bắt đầu hành trình<br />
-            <span style={{ color: C.orangeLight }}>làm chủ AI ngay hôm nay</span>
+            <span className="anim-gradient" style={{
+              background: `linear-gradient(135deg, ${C.orangeLight}, ${C.orange}, ${C.orangeLight})`,
+              backgroundSize: '200% 200%', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>làm chủ AI ngay hôm nay</span>
           </h2>
-          <p className="text-sm text-white/40 mb-8">Đừng bỏ lỡ cơ hội thay đổi sự nghiệp</p>
-          <button
-            className="w-full py-4 rounded-2xl font-bold text-base text-white animate-gradient"
-            style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.purpleLight}, ${C.orange})`, backgroundSize: '200% 200%' }}
-          >
+          <p className="text-[12px] text-white/35 mb-8 font-light">Đừng bỏ lỡ cơ hội thay đổi sự nghiệp</p>
+
+          <button className="w-full py-4 rounded-2xl font-bold text-[15px] text-white anim-gradient anim-glow"
+            style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.purpleLight}, ${C.orange})`, backgroundSize: '200% 200%' }}>
             Đăng ký khoá học ngay →
           </button>
-        </FadeIn>
+        </Reveal>
 
-        {/* Footer */}
-        <div className="mt-10 pt-6 border-t border-white/10">
-          <p className="text-[11px] text-white/30 font-mono-alt">© 2025 MAXEDU. All rights reserved.</p>
+        <div className="mt-12 pt-6 border-t border-white/[0.06]">
+          <p className="text-[10px] text-white/20 font-mono tracking-wider">© 2025 MAXEDU · All rights reserved</p>
         </div>
       </section>
     </div>
