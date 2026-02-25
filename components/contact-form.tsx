@@ -181,7 +181,7 @@ export function ContactForm() {
                     {field.icon}
                   </div>
 
-                  <input
+<input
   id={field.id}
   type={field.type}
   required
@@ -190,14 +190,17 @@ export function ContactForm() {
   onFocus={() => setFocusedField(field.id)}
   onBlur={() => setFocusedField(null)}
   placeholder={field.placeholder}
-  className="cf-input w-full pl-10 pr-10 py-3.5 rounded-xl text-[14px] font-medium text-black outline-none transition-all duration-300"
+  className="cf-input w-full pl-10 pr-10 py-3.5 rounded-xl 
+  text-[14px] font-medium text-black 
+  placeholder:text-gray-400
+  outline-none transition-all duration-300"
   style={{
     background: '#ffffff',
     border: `1.5px solid ${
-      isFocused ? '#111111' : hasValue ? '#999999' : '#dddddd'
+      isFocused ? '#111111' : hasValue ? '#9ca3af' : '#e5e7eb'
     }`,
     boxShadow: isFocused
-      ? '0 0 0 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.08)'
+      ? '0 0 0 3px rgba(0,0,0,0.05), 0 6px 18px rgba(0,0,0,0.08)'
       : 'none',
   }}
 />
