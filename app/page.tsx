@@ -309,11 +309,7 @@ export default function Page() {
         </Reveal>
 
         <Reveal delay={0.12}>
-          <div className="glass-mixed rounded-2xl p-5 relative z-10" style={{
-            boxShadow: '0 4px 40px rgba(124,58,255,0.15), 0 0 0 1px rgba(124,58,255,0.12)',
-          }}>
             <ContactForm />
-          </div>
         </Reveal>
       </section>
 
@@ -541,11 +537,7 @@ export default function Page() {
           </div>
         </Reveal>
         <Reveal delay={0.12}>
-          <div className="glass-mixed rounded-2xl p-5 relative z-10" style={{
-            boxShadow: '0 4px 40px rgba(124,58,255,0.15), 0 0 0 1px rgba(124,58,255,0.12)',
-          }}>
-            <ContactForm />
-          </div>
+          <ContactForm />
         </Reveal>
       </section>
 
@@ -733,12 +725,7 @@ export default function Page() {
         </Reveal>
 
         <Reveal delay={0.12}>
-          <div className="glass-mixed rounded-2xl p-5 relative z-10 mt-6" style={{
-            border: '1px solid rgba(255,107,32,0.2)',
-            boxShadow: '0 4px 40px rgba(255,107,32,0.1)',
-          }}>
-            <ContactForm />
-          </div>
+        <ContactForm />
         </Reveal>
       </section>
 
