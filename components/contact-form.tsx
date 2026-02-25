@@ -40,9 +40,9 @@ export function ContactForm() {
         setFormData({ fullName: '', email: '', phone: '' });
         
         // Chuyển hướng sau khi gửi thành công
-        if (data.redirectUrl) {
-          window.location.href = data.redirectUrl;
-        }
+        setTimeout(() => {
+          window.location.href = 'https://www.maxedunetwork.vn/course/khoa-hoc-vip-ai-pro-nhan-ban-1jf0eqn75';
+        }, 500);
       } else {
         setMessage('Có lỗi xảy ra, vui lòng thử lại.');
       }

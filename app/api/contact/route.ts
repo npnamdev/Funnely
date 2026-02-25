@@ -33,8 +33,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (response.ok) {
+      const responseData = typeof data === 'object' && data !== null ? data : { data };
       return NextResponse.json({
-        ...data,
+        ...responseData,
         redirectUrl: URL_REDIRECT,
       }, { status: response.status });
     }
