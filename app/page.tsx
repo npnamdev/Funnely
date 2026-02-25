@@ -1,5 +1,5 @@
-import { ComponentExample } from "@/components/component-example";
+import { ContactForm } from "@/components/contact-form";
 
 export default function Page() {
-return <ComponentExample />;
+return <ContactForm />;
 }
