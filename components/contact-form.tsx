@@ -41,10 +41,13 @@ export function ContactForm() {
       if (response.ok) {
         setMessage('success');
         setFormData({ fullName: '', email: '', phone: '' });
-        setTimeout(() => {
-          window.location.href =
-            'https://www.maxedunetwork.vn/course/khoa-hoc-vip-ai-pro-nhan-ban-1jf0eqn75';
-        }, 500);
+ setTimeout(() => {
+  window.open(
+    'https://www.maxedunetwork.vn/course/khoa-hoc-vip-ai-pro-nhan-ban-1jf0eqn75',
+    '_blank',
+    'noopener,noreferrer'
+  );
+}, 500);
       } else {
         setMessage('error');
       }
