@@ -192,10 +192,8 @@ export function ContactForm() {
   placeholder={field.placeholder}
   className="cf-input w-full pl-10 pr-10 py-3.5 rounded-xl 
   text-[14px] font-medium text-black 
-  outline-none transition-all duration-300"
+  outline-none transition-all duration-300 bg-white"
   style={{
-    background: '#ffffff',
-    color: '#000',
     border: `1.5px solid ${
       isFocused ? '#111111' : hasValue ? '#9ca3af' : '#e5e7eb'
     }`,
