@@ -21,13 +21,13 @@ function Reveal({ children, className = '', delay = 0, direction = 'up' }: {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useOnScreen(ref);
   const transforms: Record<string, string> = {
-    up: 'translateY(40px)', left: 'translateX(-30px)', right: 'translateX(30px)', scale: 'scale(0.92)',
+    up: 'translateY(44px)', left: 'translateX(-32px)', right: 'translateX(32px)', scale: 'scale(0.90)',
   };
   return (
     <div ref={ref} className={className} style={{
       opacity: visible ? 1 : 0,
       transform: visible ? 'none' : transforms[direction],
-      transition: `opacity 0.8s cubic-bezier(.16,1,.3,1) ${delay}s, transform 0.8s cubic-bezier(.16,1,.3,1) ${delay}s`,
+      transition: `opacity 0.9s cubic-bezier(.16,1,.3,1) ${delay}s, transform 0.9s cubic-bezier(.16,1,.3,1) ${delay}s`,
     }}>{children}</div>
   );
 }
@@ -44,42 +44,47 @@ function useSwipe(onSwipeLeft: () => void, onSwipeRight: () => void) {
   };
 }
 
-/* ───────────────── colour system ───────────────── */
+/* ───────────────── colour system — PURPLE + ORANGE ───────────────── */
 const C = {
-  // Pure blacks & darks
-  black: '#000000',
-  darkest: '#080808',
-  dark1: '#0d0d0d',
-  dark2: '#111111',
-  dark3: '#161616',
-  dark4: '#1c1c1c',
-  darkCard: '#141414',
-  darkCardBorder: '#1f1f1f',
+  // Deep purple backgrounds — rich, not black
+  bg0: '#0e0720',        // deepest — near-black purple
+  bg1: '#120a28',        // section base
+  bg2: '#160c30',        // slightly lighter purple
+  bg3: '#1c1040',        // card/panel
+  bg4: '#221450',        // elevated surfaces
+  bgCard: '#1a0e38',
+  bgCardBorder: '#2e1e60',
 
-  // Orange spectrum
-  orange: '#f06223',
-  orangeLight: '#ff8040',
-  orangeWarm: '#ff6b35',
-  orangeBright: '#ff7040',
-  orangeDark: '#c44a15',
-  orangeGlow: 'rgba(240,98,35,0.15)',
+  // Orange spectrum — vibrant punch
+  orange: '#ff6b20',
+  orangeLight: '#ff8c45',
+  orangeBright: '#ff7a30',
+  orangeWarm: '#ff5500',
+  orangeDark: '#cc4400',
+  orangeGlow: 'rgba(255,107,32,0.18)',
 
-  // Purple spectrum
-  purple: '#7b2fff',
-  purpleLight: '#9d5cff',
-  purpleMid: '#6020d0',
-  purpleDark: '#4010a0',
-  purpleDeep: '#2a0870',
-  purpleGlow: 'rgba(123,47,255,0.15)',
+  // Purple spectrum — the dominant tone
+  purple: '#7c3aff',
+  purpleLight: '#a066ff',
+  purpleMid: '#6025d4',
+  purpleDark: '#4415a0',
+  purpleDeep: '#2d0e7a',
+  purpleBright: '#9d5cff',
+  purpleGlow: 'rgba(124,58,255,0.25)',
+
+  // Magenta-pink highlight
+  pink: '#e040fb',
+  pinkLight: '#f06fff',
+  pinkGlow: 'rgba(224,64,251,0.15)',
 
   // Text
   white: '#ffffff',
-  white80: 'rgba(255,255,255,0.80)',
-  white50: 'rgba(255,255,255,0.50)',
-  white30: 'rgba(255,255,255,0.30)',
+  white90: 'rgba(255,255,255,0.90)',
+  white70: 'rgba(255,255,255,0.70)',
+  white45: 'rgba(255,255,255,0.45)',
+  white20: 'rgba(255,255,255,0.20)',
   white10: 'rgba(255,255,255,0.10)',
   white06: 'rgba(255,255,255,0.06)',
-  white04: 'rgba(255,255,255,0.04)',
 };
 
 /* ───────────────── data ───────────────── */
@@ -138,90 +143,127 @@ export default function Page() {
   useEffect(() => { const t = setInterval(() => setActiveTab(p => (p + 1) % 3), 5000); return () => clearInterval(t); }, []);
 
   return (
-    <div className="max-w-[430px] mx-auto overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", background: C.black }}>
+    <div className="max-w-[430px] mx-auto overflow-hidden" style={{ fontFamily: "'Syne', sans-serif", background: C.bg0 }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
         * { box-sizing: border-box; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-mono { font-family: 'Space Mono', monospace; }
 
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
         @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
         @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
         @keyframes gradient-x { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-        @keyframes glow-pulse-orange { 0%,100%{box-shadow:0 0 20px rgba(240,98,35,0.25), 0 0 40px rgba(240,98,35,0.1)} 50%{box-shadow:0 0 35px rgba(240,98,35,0.5), 0 0 60px rgba(240,98,35,0.2)} }
-        @keyframes glow-pulse-purple { 0%,100%{box-shadow:0 0 20px rgba(123,47,255,0.25)} 50%{box-shadow:0 0 35px rgba(123,47,255,0.5)} }
-        @keyframes border-rotate { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
-        @keyframes scan-line { 0%{top:0%} 100%{top:100%} }
-        @keyframes noise-flicker { 0%,100%{opacity:0.03} 50%{opacity:0.06} }
+        @keyframes glow-pulse-orange {
+          0%,100%{box-shadow:0 0 22px rgba(255,107,32,0.35), 0 0 50px rgba(255,107,32,0.12), inset 0 1px 0 rgba(255,200,150,0.15)}
+          50%{box-shadow:0 0 40px rgba(255,107,32,0.60), 0 0 80px rgba(255,107,32,0.25), inset 0 1px 0 rgba(255,200,150,0.2)}
+        }
+        @keyframes glow-pulse-purple {
+          0%,100%{box-shadow:0 0 22px rgba(124,58,255,0.35), 0 0 50px rgba(124,58,255,0.12)}
+          50%{box-shadow:0 0 40px rgba(124,58,255,0.60), 0 0 80px rgba(124,58,255,0.25)}
+        }
+        @keyframes aurora {
+          0%{transform:translate(-30%, -30%) rotate(0deg) scale(1)}
+          33%{transform:translate(20%, -10%) rotate(120deg) scale(1.2)}
+          66%{transform:translate(-10%, 30%) rotate(240deg) scale(0.9)}
+          100%{transform:translate(-30%, -30%) rotate(360deg) scale(1)}
+        }
+        @keyframes aurora2 {
+          0%{transform:translate(30%, 20%) rotate(0deg) scale(1)}
+          50%{transform:translate(-20%, -10%) rotate(180deg) scale(1.3)}
+          100%{transform:translate(30%, 20%) rotate(360deg) scale(1)}
+        }
+        @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        @keyframes counter-spin { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
 
-        .anim-float { animation: float 3s ease-in-out infinite; }
-        .anim-shimmer { background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent); background-size:200% 100%; animation:shimmer 2.5s infinite; }
-        .anim-marquee { animation: marquee 25s linear infinite; }
+        .anim-float { animation: float 3.5s ease-in-out infinite; }
+        .anim-shimmer { background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,0.18) 50%,transparent 80%); background-size:200% 100%; animation:shimmer 2.5s infinite; }
+        .anim-marquee { animation: marquee 28s linear infinite; }
         .anim-gradient { background-size:200% 200%; animation:gradient-x 4s ease infinite; }
         .anim-glow-orange { animation: glow-pulse-orange 2.5s ease-in-out infinite; }
         .anim-glow-purple { animation: glow-pulse-purple 2.5s ease-in-out infinite; }
+        .anim-aurora1 { animation: aurora 18s ease-in-out infinite; }
+        .anim-aurora2 { animation: aurora2 14s ease-in-out infinite; }
+        .anim-spin-slow { animation: spin-slow 20s linear infinite; }
 
-        /* Glass variants */
-        .glass-dark { backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); }
-        .glass-orange { backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); background:rgba(240,98,35,0.06); border:1px solid rgba(240,98,35,0.15); }
-        .glass-purple { backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); background:rgba(123,47,255,0.06); border:1px solid rgba(123,47,255,0.15); }
+        /* Glass — purple-tinted */
+        .glass-deep { backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); background:rgba(18,10,40,0.75); border:1px solid rgba(124,58,255,0.2); }
+        .glass-purple { backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); background:rgba(124,58,255,0.08); border:1px solid rgba(124,58,255,0.2); }
+        .glass-orange { backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); background:rgba(255,107,32,0.08); border:1px solid rgba(255,107,32,0.2); }
+        .glass-mixed { backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); background:rgba(26,14,56,0.8); border:1px solid rgba(255,255,255,0.1); }
 
-        /* Noise texture overlay */
-        .noise::after { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); opacity:0.04; pointer-events:none; mix-blend-mode:overlay; }
+        /* Noise */
+        .noise::after { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); opacity:0.035; pointer-events:none; mix-blend-mode:overlay; }
 
         .scroll-hide::-webkit-scrollbar{display:none} .scroll-hide{-ms-overflow-style:none;scrollbar-width:none}
 
-        /* Grid dot pattern */
+        /* Purple dot grid */
         .bg-grid { 
           background-image: 
-            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), 
-            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); 
+            radial-gradient(circle, rgba(124,58,255,0.12) 1px, transparent 1px); 
+          background-size: 28px 28px; 
+        }
+        .bg-grid-lines { 
+          background-image: 
+            linear-gradient(rgba(124,58,255,0.06) 1px, transparent 1px), 
+            linear-gradient(90deg, rgba(124,58,255,0.06) 1px, transparent 1px); 
           background-size: 32px 32px; 
         }
-        /* Richer grid for hero sections */
-        .bg-grid-rich { 
-          background-image: 
-            radial-gradient(circle at 20% 50%, rgba(123,47,255,0.06) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(240,98,35,0.05) 0%, transparent 50%),
-            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
-            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); 
-          background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px; 
+        .bg-grid-rich {
+          background-image:
+            radial-gradient(ellipse 80% 50% at 20% 60%, rgba(124,58,255,0.15) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 40% at 80% 30%, rgba(255,107,32,0.1) 0%, transparent 60%),
+            radial-gradient(circle, rgba(124,58,255,0.05) 1px, transparent 1px);
+          background-size: 100% 100%, 100% 100%, 28px 28px;
         }
 
-        /* Orange accent line */
-        .accent-line::before { content:''; display:block; width:40px; height:3px; background:linear-gradient(90deg, #f06223, #ff8040); border-radius:2px; margin-bottom:12px; }
-        .accent-line-center::before { content:''; display:block; width:40px; height:3px; background:linear-gradient(90deg, #f06223, #7b2fff); border-radius:2px; margin:0 auto 12px; }
+        /* Orange highlight line */
+        .accent-line::before { content:''; display:block; width:36px; height:3px; background:linear-gradient(90deg, #ff6b20, #ff8c45); border-radius:99px; margin-bottom:12px; }
+        .accent-line-center::before { content:''; display:block; width:36px; height:3px; background:linear-gradient(90deg, #7c3aff, #ff6b20); border-radius:99px; margin:0 auto 12px; }
 
-        /* Tab underline indicator */
-        .tab-pill { position: relative; }
-        .tab-pill.active::after { content:''; position:absolute; bottom:-2px; left:50%; transform:translateX(-50%); width:20px; height:2px; background:#f06223; border-radius:2px; }
+        /* Glow border card */
+        .card-glow { transition: box-shadow 0.35s ease, transform 0.35s ease, border-color 0.35s ease; }
+        .card-glow:hover { box-shadow: 0 8px 40px rgba(255,107,32,0.15), 0 0 0 1px rgba(255,107,32,0.25); transform: translateY(-3px); }
 
-        /* Card hover glow */
-        .card-hover { transition: box-shadow 0.3s ease, transform 0.3s ease; }
-        .card-hover:hover { box-shadow: 0 8px 32px rgba(240,98,35,0.1); transform: translateY(-2px); }
-
-        /* Number badge */
-        .num-badge { background: linear-gradient(135deg, #f06223, #ff8040); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* Orange text gradient */
+        .text-orange-grad { background: linear-gradient(135deg, #ff8c45, #ff6b20); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-purple-grad { background: linear-gradient(135deg, #a066ff, #7c3aff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         /* Divider */
-        .divider { height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); }
+        .divider { height:1px; background: linear-gradient(90deg, transparent, rgba(124,58,255,0.3), rgba(255,107,32,0.2), transparent); }
 
-        /* Stat separator */
-        .stat-sep { border-right: 1px solid rgba(255,255,255,0.07); }
+        /* Stat sep */
+        .stat-sep { border-right: 1px solid rgba(124,58,255,0.2); }
+
+        /* Hex decorations */
+        .hex-ring { 
+          position:absolute; border-radius:50%; 
+          border: 1px solid rgba(124,58,255,0.12);
+          pointer-events:none;
+        }
       `}</style>
 
       {/* ════════════ HERO ════════════ */}
-      <section className="relative w-full" style={{ background: C.black }}>
+      <section className="relative w-full" style={{ background: C.bg0 }}>
+        {/* Aurora background behind hero image */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="anim-aurora1 absolute w-[400px] h-[400px] rounded-full opacity-50"
+            style={{ top: '10%', left: '10%', background: `radial-gradient(circle, rgba(124,58,255,0.4) 0%, transparent 70%)` }} />
+          <div className="anim-aurora2 absolute w-[300px] h-[300px] rounded-full opacity-40"
+            style={{ top: '20%', right: '0%', background: `radial-gradient(circle, rgba(255,107,32,0.3) 0%, transparent 70%)` }} />
+        </div>
         <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772012420/demo/45_k9GZXXLBqtavWsW3Y-original.png.png"
-          alt="Hero Banner" className="w-full h-auto block" />
-        <div className="absolute bottom-0 inset-x-0 h-40" style={{ background: `linear-gradient(to top, ${C.black}, transparent)` }} />
+          alt="Hero Banner" className="w-full h-auto block relative z-10" />
+        <div className="absolute bottom-0 inset-x-0 h-48 z-20"
+          style={{ background: `linear-gradient(to top, ${C.bg0} 0%, transparent 100%)` }} />
       </section>
 
       {/* ════════════ MARQUEE ════════════ */}
-      <div className="py-2.5 overflow-hidden relative" style={{ background: `linear-gradient(90deg, ${C.orange}, ${C.orangeDark})` }}>
+      <div className="py-3 overflow-hidden relative z-10" style={{
+        background: `linear-gradient(90deg, ${C.orangeWarm} 0%, ${C.orange} 40%, ${C.purpleMid} 100%)`,
+      }}>
         <div className="anim-marquee whitespace-nowrap flex">
-          {[0,1].map(i => (
-            <span key={i} className="inline-flex gap-8 font-semibold text-[10px] tracking-[0.18em] uppercase px-4" style={{ color: 'rgba(255,255,255,0.95)' }}>
+          {[0, 1].map(i => (
+            <span key={i} className="inline-flex gap-10 font-semibold text-[10px] tracking-[0.2em] uppercase px-6" style={{ color: 'rgba(255,255,255,0.95)', fontFamily: "'Space Mono', monospace" }}>
               <span>🔥 Ưu đãi có hạn</span><span>⚡ Học AI thực chiến</span>
               <span>🚀 Tăng thu nhập 3x</span><span>💡 5000+ học viên</span>
               <span>🔥 Ưu đãi có hạn</span><span>⚡ Học AI thực chiến</span>
@@ -232,45 +274,64 @@ export default function Page() {
       </div>
 
       {/* ════════════ FORM 1 ════════════ */}
-      <section className="relative px-5 pt-12 pb-12 noise bg-grid-rich" style={{ background: C.dark1 }}>
-        {/* Glow blobs */}
-        <div className="absolute top-0 left-0 w-56 h-56 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(123,47,255,0.12) 0%, transparent 70%)`, transform: 'translate(-40%, -30%)' }} />
-        <div className="absolute bottom-0 right-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(240,98,35,0.1) 0%, transparent 70%)`, transform: 'translate(30%, 20%)' }} />
+      <section className="relative px-5 pt-14 pb-14 noise bg-grid-rich overflow-hidden" style={{ background: C.bg1 }}>
+        {/* Decorative rings */}
+        <div className="hex-ring w-72 h-72" style={{ top: '-80px', right: '-80px', borderColor: 'rgba(255,107,32,0.1)' }} />
+        <div className="hex-ring w-48 h-48" style={{ top: '-40px', right: '-40px', borderColor: 'rgba(255,107,32,0.08)' }} />
+        <div className="hex-ring w-64 h-64" style={{ bottom: '-80px', left: '-80px', borderColor: 'rgba(124,58,255,0.1)' }} />
+        
+        {/* Glows */}
+        <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
+          style={{ background: `radial-gradient(circle at 80% 10%, rgba(255,107,32,0.12) 0%, transparent 70%)` }} />
+        <div className="absolute bottom-0 left-0 w-64 h-64 pointer-events-none"
+          style={{ background: `radial-gradient(circle at 20% 90%, rgba(124,58,255,0.18) 0%, transparent 70%)` }} />
 
         <Reveal>
           <div className="text-center mb-8 relative z-10">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10px] font-semibold tracking-[0.15em] uppercase mb-5"
-              style={{ color: C.orangeLight, background: 'rgba(240,98,35,0.1)', border: '1px solid rgba(240,98,35,0.2)' }}>
-              <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: C.orange }} />
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-bold tracking-[0.16em] uppercase mb-5"
+              style={{ color: C.orangeLight, background: 'rgba(255,107,32,0.1)', border: '1px solid rgba(255,107,32,0.25)' }}>
+              <span className="w-2 h-2 rounded-full inline-block anim-glow-orange" style={{ background: C.orange }} />
               Đăng ký ngay hôm nay
             </span>
-            <h2 className="text-[27px] font-black text-white leading-[1.2] tracking-tight">
+            <h2 className="text-[28px] font-black text-white leading-[1.18] tracking-tight">
               Đăng ký nhận
             </h2>
-            <h2 className="text-[27px] font-black leading-[1.2] tracking-tight mt-1">
+            <h2 className="text-[28px] font-black leading-[1.18] tracking-tight mt-1">
               <span style={{
-                background: `linear-gradient(135deg, ${C.orangeLight}, ${C.orange}, ${C.purple})`,
+                background: `linear-gradient(135deg, ${C.orangeLight} 0%, ${C.orange} 40%, ${C.purpleBright} 100%)`,
                 backgroundSize: '200% 200%', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               }} className="anim-gradient">nhiều ưu đãi hấp dẫn</span>
             </h2>
+            <p className="text-[12px] mt-3 font-light leading-relaxed" style={{ color: C.white45, maxWidth: 260, margin: '12px auto 0' }}>
+              Tham gia ngay — 39 suất cuối với giá ưu đãi đặc biệt
+            </p>
           </div>
         </Reveal>
 
         <Reveal delay={0.12}>
-          <div className="glass-dark rounded-2xl p-5 relative z-10" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+          <div className="glass-mixed rounded-2xl p-5 relative z-10" style={{
+            boxShadow: '0 4px 40px rgba(124,58,255,0.15), 0 0 0 1px rgba(124,58,255,0.12)',
+          }}>
             <ContactForm />
           </div>
         </Reveal>
       </section>
 
       {/* ════════════ STATS ════════════ */}
-      <section style={{ background: C.dark2, borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <div className="grid grid-cols-4">
+      <section className="relative overflow-hidden" style={{
+        background: `linear-gradient(135deg, ${C.bg3} 0%, ${C.bg4} 100%)`,
+        borderTop: '1px solid rgba(124,58,255,0.2)',
+        borderBottom: '1px solid rgba(124,58,255,0.2)',
+      }}>
+        {/* Subtle horizontal glow */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: `linear-gradient(90deg, transparent 0%, rgba(255,107,32,0.04) 50%, transparent 100%)` }} />
+        <div className="grid grid-cols-4 relative z-10">
           {stats.map((s, i) => (
             <Reveal key={i} delay={i * 0.07} direction="scale">
               <div className={`py-5 text-center ${i < 3 ? 'stat-sep' : ''}`}>
-                <div className="font-mono text-[16px] font-bold leading-none" style={{ color: C.orangeLight }}>{s.value}</div>
-                <div className="text-[9px] uppercase tracking-[0.14em] mt-2 font-medium" style={{ color: C.white30 }}>{s.label}</div>
+                <div className="font-mono text-[17px] font-bold leading-none text-orange-grad">{s.value}</div>
+                <div className="text-[9px] uppercase tracking-[0.15em] mt-2 font-semibold" style={{ color: C.white45, fontFamily: "'Space Mono', monospace" }}>{s.label}</div>
               </div>
             </Reveal>
           ))}
@@ -278,64 +339,81 @@ export default function Page() {
       </section>
 
       {/* ════════════ OBJECTIVES ════════════ */}
-      <section className="px-5 py-12 bg-grid-rich" style={{ background: C.dark1 }}>
+      <section className="px-5 py-14 bg-grid relative overflow-hidden" style={{ background: C.bg1 }}>
+        {/* Large aurora glow behind */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="anim-aurora1 absolute w-[500px] h-[500px] rounded-full opacity-20"
+            style={{ top: '0%', left: '50%', transform: 'translateX(-50%)', background: `radial-gradient(circle, ${C.purple} 0%, transparent 70%)` }} />
+        </div>
+
         <Reveal>
-          <div className="accent-line-center">
-            <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-1" style={{ color: C.orange }}>Bạn sẽ đạt được</p>
+          <div className="accent-line-center relative z-10">
+            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.orange, fontFamily: "'Space Mono', monospace" }}>Bạn sẽ đạt được</p>
           </div>
-          <h2 className="text-center text-[24px] font-black leading-tight mb-8 text-white tracking-tight">Mục tiêu khoá học</h2>
+          <h2 className="text-center text-[25px] font-black leading-tight mb-8 text-white tracking-tight relative z-10">Mục tiêu khoá học</h2>
         </Reveal>
 
-        {/* Tab buttons — full width, no overflow scroll, evenly spaced */}
-        <div className="grid grid-cols-3 gap-2 mb-6">
+        {/* Tab buttons */}
+        <div className="grid grid-cols-3 gap-2 mb-6 relative z-10">
           {objectives.map((obj, i) => (
             <button
               key={i}
               onClick={() => setActiveTab(i)}
-              className="tab-pill py-2.5 px-2 rounded-xl text-[10px] font-bold transition-all duration-300 text-center leading-snug"
+              className="py-3 px-2 rounded-xl text-[10px] font-bold transition-all duration-300 text-center leading-snug"
               style={{
                 background: activeTab === i
-                  ? `linear-gradient(135deg, ${C.orange}, ${C.orangeDark})`
-                  : 'rgba(255,255,255,0.05)',
-                color: activeTab === i ? 'white' : C.white50,
-                border: activeTab === i ? 'none' : '1px solid rgba(255,255,255,0.07)',
-                boxShadow: activeTab === i ? `0 4px 20px rgba(240,98,35,0.3)` : 'none',
+                  ? `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeWarm} 100%)`
+                  : 'rgba(124,58,255,0.08)',
+                color: activeTab === i ? 'white' : C.white45,
+                border: activeTab === i ? 'none' : '1px solid rgba(124,58,255,0.2)',
+                boxShadow: activeTab === i ? `0 4px 24px rgba(255,107,32,0.4), inset 0 1px 0 rgba(255,255,255,0.2)` : 'none',
+                transform: activeTab === i ? 'translateY(-2px)' : 'none',
               }}>
-              <span className="block text-lg mb-1">{obj.icon}</span>
-              <span className="block">{obj.title.split(' ').slice(0,2).join(' ')}</span>
+              <span className="block text-xl mb-1.5">{obj.icon}</span>
+              <span className="block leading-tight">{obj.title.split(' ').slice(0, 2).join(' ')}</span>
             </button>
           ))}
         </div>
 
         {/* Tab content */}
-        <div className="relative" style={{ minHeight: 190 }}>
+        <div className="relative z-10" style={{ minHeight: 200 }}>
           {objectives.map((obj, i) => (
             <div key={i} style={{
               position: activeTab === i ? 'relative' : 'absolute',
               top: 0, left: 0, right: 0,
               opacity: activeTab === i ? 1 : 0,
-              transform: activeTab === i ? 'translateX(0)' : 'translateX(16px)',
-              transition: 'opacity 0.45s ease, transform 0.45s ease',
+              transform: activeTab === i ? 'translateY(0)' : 'translateY(12px)',
+              transition: 'opacity 0.5s ease, transform 0.5s ease',
               pointerEvents: activeTab === i ? 'auto' : 'none',
             }}>
-              <div className="rounded-2xl p-5" style={{ background: C.dark3, border: '1px solid rgba(255,255,255,0.07)' }}>
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-                    style={{ background: 'rgba(240,98,35,0.12)', border: '1px solid rgba(240,98,35,0.2)' }}>
+              <div className="rounded-2xl p-5 overflow-hidden relative" style={{
+                background: `linear-gradient(135deg, ${C.bg3} 0%, ${C.bgCard} 100%)`,
+                border: '1px solid rgba(124,58,255,0.22)',
+                boxShadow: '0 4px 32px rgba(124,58,255,0.1)',
+              }}>
+                {/* Glow accent top-right */}
+                <div className="absolute top-0 right-0 w-24 h-24 pointer-events-none rounded-2xl overflow-hidden"
+                  style={{ background: `radial-gradient(circle at 80% 20%, rgba(255,107,32,0.12) 0%, transparent 70%)` }} />
+                <div className="flex items-center gap-3 mb-5 relative z-10">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+                    style={{
+                      background: `linear-gradient(135deg, rgba(255,107,32,0.15) 0%, rgba(124,58,255,0.15) 100%)`,
+                      border: '1px solid rgba(255,107,32,0.25)',
+                    }}>
                     {obj.icon}
                   </div>
                   <h3 className="text-[13px] font-bold text-white leading-tight">{obj.title}</h3>
                 </div>
-                <div className="space-y-3.5">
+                <div className="space-y-4 relative z-10">
                   {obj.items.map((item, j) => (
                     <div key={j} className="flex gap-3 items-start">
                       <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                        style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.orangeLight})` }}>
+                        style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.orangeLight})`, boxShadow: `0 2px 8px rgba(255,107,32,0.4)` }}>
                         <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
-                          <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </div>
-                      <p className="text-[12.5px] leading-relaxed" style={{ color: C.white50 }}>{item}</p>
+                      <p className="text-[12.5px] leading-relaxed" style={{ color: C.white70 }}>{item}</p>
                     </div>
                   ))}
                 </div>
@@ -345,22 +423,24 @@ export default function Page() {
         </div>
 
         {/* Dot indicators */}
-        <div className="flex justify-center gap-1.5 mt-5">
+        <div className="flex justify-center gap-2 mt-5 relative z-10">
           {objectives.map((_, i) => (
             <button key={i} onClick={() => setActiveTab(i)}
-              className="h-1 rounded-full transition-all duration-400"
+              className="h-1.5 rounded-full transition-all duration-500"
               style={{
-                width: activeTab === i ? 24 : 5,
-                background: activeTab === i ? C.orange : 'rgba(255,255,255,0.15)',
+                width: activeTab === i ? 28 : 6,
+                background: activeTab === i
+                  ? `linear-gradient(90deg, ${C.orange}, ${C.purpleBright})`
+                  : 'rgba(124,58,255,0.25)',
               }} />
           ))}
         </div>
 
         <Reveal delay={0.15}>
-          <div className="flex justify-center mt-8">
-            <button className="relative px-8 py-3.5 rounded-xl font-bold text-[13px] text-white overflow-hidden anim-glow-orange"
-              style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.orangeDark})` }}>
-              <span className="relative z-10">Đăng ký ngay →</span>
+          <div className="flex justify-center mt-8 relative z-10">
+            <button className="relative px-9 py-4 rounded-xl font-bold text-[14px] text-white overflow-hidden anim-glow-orange"
+              style={{ background: `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeWarm} 100%)`, fontFamily: "'Syne', sans-serif" }}>
+              <span className="relative z-10 flex items-center gap-2">Đăng ký ngay <span>→</span></span>
               <div className="absolute inset-0 anim-shimmer" />
             </button>
           </div>
@@ -371,30 +451,37 @@ export default function Page() {
       <div className="divider" />
 
       {/* ════════════ TESTIMONIALS ════════════ */}
-      <section className="relative px-5 py-12 bg-grid-rich noise" style={{ background: C.dark1 }}>
-        {/* Purple glow */}
+      <section className="relative px-5 py-14 bg-grid-rich noise overflow-hidden" style={{ background: C.bg2 }}>
+        {/* Dual aurora */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full" style={{ background: `radial-gradient(circle, rgba(123,47,255,0.08) 0%, transparent 70%)` }} />
+          <div className="anim-aurora2 absolute w-96 h-96 rounded-full opacity-25"
+            style={{ top: '-10%', left: '-10%', background: `radial-gradient(circle, ${C.purple} 0%, transparent 70%)` }} />
+          <div className="anim-aurora1 absolute w-64 h-64 rounded-full opacity-20"
+            style={{ bottom: '0%', right: '-5%', background: `radial-gradient(circle, ${C.orange} 0%, transparent 70%)` }} />
         </div>
 
         <Reveal>
           <div className="accent-line-center">
-            <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-1" style={{ color: C.purpleLight }}>Phản hồi thực tế</p>
+            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.purpleBright, fontFamily: "'Space Mono', monospace" }}>Phản hồi thực tế</p>
           </div>
-          <h2 className="text-center text-[24px] font-black text-white leading-tight mb-2 tracking-tight">Ứng dụng AI — Kết quả thật</h2>
-          <p className="text-center text-[12px] mb-8 max-w-[280px] mx-auto leading-relaxed" style={{ color: C.white30 }}>
+          <h2 className="text-center text-[25px] font-black text-white leading-tight mb-2 tracking-tight">
+            Ứng dụng AI — <span style={{ color: C.orangeLight }}>Kết quả thật</span>
+          </h2>
+          <p className="text-center text-[12px] mb-8 max-w-[270px] mx-auto leading-relaxed" style={{ color: C.white45 }}>
             Hàng trăm học viên đã ứng dụng AI để tiết kiệm thời gian và tăng thu nhập
           </p>
         </Reveal>
 
         <Reveal delay={0.1}>
           <div className="relative" {...testimonialSwipe}>
-            <div className="overflow-hidden rounded-2xl">
+            <div className="overflow-hidden rounded-2xl" style={{
+              boxShadow: `0 8px 48px rgba(124,58,255,0.2), 0 0 0 1px rgba(124,58,255,0.15)`,
+            }}>
               <div className="flex transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)]"
                 style={{ transform: `translateX(-${testimonialIdx * 100}%)` }}>
                 {testimonials.map((t, i) => (
                   <div key={i} className="w-full flex-shrink-0 px-0.5">
-                    <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+                    <div className="rounded-2xl overflow-hidden">
                       <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014033/demo/9fb42a7a2eb8a0e6f9a9.jpg.jpg"
                         alt="Testimonial" className="w-full h-auto object-cover" />
                     </div>
@@ -403,13 +490,15 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="flex justify-center gap-1.5 mt-5">
+            <div className="flex justify-center gap-2 mt-5">
               {testimonials.map((_, i) => (
                 <button key={i} onClick={() => setTestimonialIdx(i)}
-                  className="h-1 rounded-full transition-all duration-400"
+                  className="h-1.5 rounded-full transition-all duration-500"
                   style={{
-                    width: testimonialIdx === i ? 24 : 5,
-                    background: testimonialIdx === i ? C.purple : 'rgba(255,255,255,0.12)',
+                    width: testimonialIdx === i ? 28 : 6,
+                    background: testimonialIdx === i
+                      ? `linear-gradient(90deg, ${C.purple}, ${C.purpleBright})`
+                      : 'rgba(124,58,255,0.25)',
                   }} />
               ))}
             </div>
@@ -418,8 +507,12 @@ export default function Page() {
 
         <Reveal delay={0.2}>
           <div className="flex justify-center mt-7">
-            <button className="px-8 py-3 rounded-xl font-bold text-[13px] transition-all anim-glow-purple"
-              style={{ background: `linear-gradient(135deg, ${C.purpleMid}, ${C.purple})`, color: 'white' }}>
+            <button className="px-9 py-3.5 rounded-xl font-bold text-[14px] anim-glow-purple transition-all"
+              style={{
+                background: `linear-gradient(135deg, ${C.purpleMid} 0%, ${C.purple} 100%)`,
+                color: 'white',
+                boxShadow: `0 4px 24px rgba(124,58,255,0.4)`,
+              }}>
               Đăng ký ngay
             </button>
           </div>
@@ -427,55 +520,75 @@ export default function Page() {
       </section>
 
       {/* ════════════ FORM 2 ════════════ */}
-      <section className="relative px-5 py-12 overflow-hidden"
-        style={{ background: `linear-gradient(145deg, ${C.dark2} 0%, ${C.dark3} 100%)`, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <section className="relative px-5 py-14 overflow-hidden" style={{
+        background: `linear-gradient(145deg, ${C.bg3} 0%, ${C.bg2} 100%)`,
+        borderTop: '1px solid rgba(124,58,255,0.15)',
+      }}>
         {/* Orange accent top bar */}
-        <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${C.orange}, transparent)` }} />
+        <div className="absolute top-0 inset-x-0 h-[2px]"
+          style={{ background: `linear-gradient(90deg, transparent 0%, ${C.orange} 50%, transparent 100%)` }} />
 
-        <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(240,98,35,0.08) 0%, transparent 70%)` }} />
-        <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(123,47,255,0.08) 0%, transparent 70%)` }} />
+        <div className="absolute -top-20 -right-16 w-56 h-56 rounded-full pointer-events-none"
+          style={{ background: `radial-gradient(circle, rgba(255,107,32,0.1) 0%, transparent 70%)` }} />
+        <div className="absolute -bottom-20 -left-16 w-56 h-56 rounded-full pointer-events-none"
+          style={{ background: `radial-gradient(circle, rgba(124,58,255,0.12) 0%, transparent 70%)` }} />
 
         <Reveal>
           <div className="text-center mb-8 relative z-10">
-            <div className="anim-float inline-block text-4xl mb-4">📚</div>
-            <h2 className="text-[23px] font-black text-white leading-tight tracking-tight">Điền thông tin bên dưới</h2>
-            <p className="text-[13px] mt-1.5 font-light" style={{ color: C.white30 }}>để nhận tài liệu miễn phí</p>
+            <div className="anim-float inline-block text-5xl mb-4">📚</div>
+            <h2 className="text-[24px] font-black text-white leading-tight tracking-tight">Điền thông tin bên dưới</h2>
+            <p className="text-[13px] mt-2 font-light" style={{ color: C.white45 }}>để nhận tài liệu miễn phí</p>
           </div>
         </Reveal>
         <Reveal delay={0.12}>
-          <div className="glass-dark rounded-2xl p-5 relative z-10" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
+          <div className="glass-mixed rounded-2xl p-5 relative z-10" style={{
+            boxShadow: '0 4px 40px rgba(124,58,255,0.15), 0 0 0 1px rgba(124,58,255,0.12)',
+          }}>
             <ContactForm />
           </div>
         </Reveal>
       </section>
 
       {/* ════════════ VIDEOS ════════════ */}
-      <section className="px-5 py-12 bg-grid-rich" style={{ background: C.dark1 }}>
+      <section className="px-5 py-14 bg-grid-lines relative overflow-hidden" style={{ background: C.bg1 }}>
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: `radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,255,0.08) 0%, transparent 70%)` }} />
+
         <Reveal>
-          <div className="accent-line-center">
-            <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-1" style={{ color: C.purple }}>MAXEDU Studio</p>
+          <div className="accent-line-center relative z-10">
+            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.purpleBright, fontFamily: "'Space Mono', monospace" }}>MAXEDU Studio</p>
           </div>
-          <h2 className="text-center text-[24px] font-black leading-tight mb-1 tracking-tight" style={{ color: C.white }}>
-            Video AI <span style={{ color: C.orangeLight }}>mọi chủ đề</span>
+          <h2 className="text-center text-[25px] font-black leading-tight mb-1 tracking-tight text-white relative z-10">
+            Video AI <span className="text-orange-grad">mọi chủ đề</span>
           </h2>
-          <p className="text-center text-[11px] mb-8" style={{ color: C.white30 }}>Học viên MAXEDU tạo ra bằng kỹ năng AI</p>
+          <p className="text-center text-[11px] mb-8 relative z-10" style={{ color: C.white45 }}>Học viên MAXEDU tạo ra bằng kỹ năng AI</p>
         </Reveal>
 
-        <div className="space-y-4">
+        <div className="space-y-4 relative z-10">
           {videos.slice(0, showVideos).map((v, i) => (
-            <Reveal key={i} delay={i * 0.06}>
-              <div className="rounded-2xl overflow-hidden card-hover" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
-                <div style={{ background: C.black }}>
+            <Reveal key={i} delay={i * 0.07}>
+              <div className="rounded-2xl overflow-hidden card-glow" style={{
+                border: '1px solid rgba(124,58,255,0.18)',
+                background: C.bgCard,
+              }}>
+                <div style={{ background: C.bg0 }}>
                   <iframe width="100%" height="200" src={`https://www.youtube.com/embed/${v.id}`}
                     title={v.title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen loading="lazy" className="block" />
                 </div>
-                <div className="px-4 py-3 flex items-center gap-3" style={{ background: C.dark3 }}>
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0 font-mono"
-                    style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.orangeDark})` }}>
-                    {String(i + 1).padStart(2,'0')}
+                <div className="px-4 py-3.5 flex items-center gap-3" style={{
+                  background: `linear-gradient(135deg, ${C.bg3} 0%, ${C.bgCard} 100%)`,
+                  borderTop: '1px solid rgba(124,58,255,0.12)',
+                }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0"
+                    style={{
+                      background: `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeWarm} 100%)`,
+                      boxShadow: '0 2px 12px rgba(255,107,32,0.4)',
+                      fontFamily: "'Space Mono', monospace",
+                    }}>
+                    {String(i + 1).padStart(2, '0')}
                   </div>
-                  <span className="text-[13px] font-semibold" style={{ color: C.white80 }}>{v.title}</span>
+                  <span className="text-[13px] font-semibold" style={{ color: C.white90 }}>{v.title}</span>
                 </div>
               </div>
             </Reveal>
@@ -484,10 +597,14 @@ export default function Page() {
 
         {showVideos < videos.length && (
           <Reveal>
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-7 relative z-10">
               <button onClick={() => setShowVideos(videos.length)}
-                className="px-6 py-3 rounded-xl text-[12px] font-bold transition-all"
-                style={{ background: 'transparent', color: C.orange, border: `1.5px solid rgba(240,98,35,0.3)` }}>
+                className="px-7 py-3 rounded-xl text-[12px] font-bold transition-all"
+                style={{
+                  background: 'transparent',
+                  color: C.purpleBright,
+                  border: `1.5px solid rgba(124,58,255,0.35)`,
+                }}>
                 Xem thêm {videos.length - showVideos} video ↓
               </button>
             </div>
@@ -496,29 +613,36 @@ export default function Page() {
       </section>
 
       {/* ════════════ GALLERY GRID ════════════ */}
-      <section className="relative px-5 py-12 noise" style={{ background: C.dark2 }}>
+      <section className="relative px-5 py-14 noise overflow-hidden" style={{ background: C.bg2 }}>
         {/* Purple accent top */}
-        <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${C.purple}, transparent)` }} />
+        <div className="absolute top-0 inset-x-0 h-[2px]"
+          style={{ background: `linear-gradient(90deg, transparent 0%, ${C.purple} 50%, transparent 100%)` }} />
 
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-10 -right-20 w-64 h-64 rounded-full" style={{ background: `radial-gradient(circle, rgba(123,47,255,0.07) 0%, transparent 70%)` }} />
-          <div className="absolute -bottom-10 -left-20 w-64 h-64 rounded-full" style={{ background: `radial-gradient(circle, rgba(240,98,35,0.06) 0%, transparent 70%)` }} />
+          <div className="anim-aurora2 absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-20"
+            style={{ background: `radial-gradient(circle, rgba(124,58,255,0.6) 0%, transparent 70%)` }} />
+          <div className="anim-aurora1 absolute -bottom-20 -left-20 w-72 h-72 rounded-full opacity-15"
+            style={{ background: `radial-gradient(circle, rgba(255,107,32,0.5) 0%, transparent 70%)` }} />
         </div>
 
         <Reveal>
           <div className="accent-line-center">
-            <p className="text-center text-[10px] font-semibold tracking-[0.2em] uppercase mb-1" style={{ color: C.purpleLight }}>Portfolio</p>
+            <p className="text-center text-[10px] font-bold tracking-[0.22em] uppercase mb-1" style={{ color: C.purpleLight, fontFamily: "'Space Mono', monospace" }}>Portfolio</p>
           </div>
           <h2 className="text-center text-[22px] font-black text-white leading-tight mb-8 tracking-tight">
             Tạo ảnh xây nhân hiệu,<br />
-            <span style={{ color: C.orangeLight }}>poster & phục vụ công việc</span>
+            <span className="text-orange-grad">poster & phục vụ công việc</span>
           </h2>
         </Reveal>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 relative z-10">
           {galleryImages.map((_, i) => (
             <Reveal key={i} delay={i * 0.06} direction="scale">
-              <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: '1/1', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="rounded-2xl overflow-hidden card-glow" style={{
+                aspectRatio: '1/1',
+                border: '1px solid rgba(124,58,255,0.2)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+              }}>
                 <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014034/demo/212973ed772ff971a03e.jpg.jpg"
                   alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
               </div>
@@ -527,9 +651,9 @@ export default function Page() {
         </div>
 
         <Reveal delay={0.25}>
-          <div className="flex justify-center mt-8">
-            <button className="relative px-8 py-3.5 rounded-xl font-bold text-[13px] overflow-hidden anim-glow-orange"
-              style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.orangeDark})`, color: 'white' }}>
+          <div className="flex justify-center mt-8 relative z-10">
+            <button className="relative px-9 py-4 rounded-xl font-bold text-[14px] overflow-hidden anim-glow-orange"
+              style={{ background: `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeWarm} 100%)`, color: 'white' }}>
               <span className="relative z-10">Thực chiến tạo video viral 🔥</span>
               <div className="absolute inset-0 anim-shimmer" />
             </button>
@@ -538,94 +662,126 @@ export default function Page() {
       </section>
 
       {/* ════════════ GALLERY SLIDER ════════════ */}
-      <section className="relative py-6" style={{ background: C.black }} {...gallerySwipe}>
-        <div className="overflow-hidden px-5">
+      <section className="relative py-6 overflow-hidden" style={{ background: C.bg0 }} {...gallerySwipe}>
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: `radial-gradient(ellipse 100% 100% at 50% 50%, rgba(124,58,255,0.06) 0%, transparent 70%)` }} />
+        <div className="overflow-hidden px-5 relative z-10">
           <div className="flex transition-transform duration-600 ease-[cubic-bezier(.16,1,.3,1)] gap-4"
             style={{ transform: `translateX(calc(-${gallerySlideIdx * 100}% - ${gallerySlideIdx * 16}px))` }}>
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="w-full flex-shrink-0 rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div key={i} className="w-full flex-shrink-0 rounded-2xl overflow-hidden" style={{
+                border: '1px solid rgba(124,58,255,0.18)',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+              }}>
                 <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014033/demo/d5afc963f3a17dff24b0.jpg.jpg"
                   alt={`Gallery Slide ${i + 1}`} className="w-full h-auto block" />
               </div>
             ))}
           </div>
         </div>
-        <div className="flex justify-center gap-1.5 pt-4 pb-1" style={{ background: C.black }}>
+        <div className="flex justify-center gap-2 pt-5 pb-1 relative z-10">
           {Array.from({ length: 8 }).map((_, i) => (
             <button key={i} onClick={() => setGallerySlideIdx(i)}
-              className="h-1 rounded-full transition-all duration-400"
+              className="h-1.5 rounded-full transition-all duration-500"
               style={{
-                width: gallerySlideIdx === i ? 24 : 5,
-                background: gallerySlideIdx === i ? C.orange : 'rgba(255,255,255,0.12)',
+                width: gallerySlideIdx === i ? 28 : 6,
+                background: gallerySlideIdx === i
+                  ? `linear-gradient(90deg, ${C.orange}, ${C.purpleBright})`
+                  : 'rgba(124,58,255,0.2)',
               }} />
           ))}
         </div>
       </section>
 
       {/* ════════════ GUIDE IMAGE ════════════ */}
-      <section style={{ background: C.dark1 }}>
+      <section style={{ background: C.bg1 }}>
         <img src="https://res.cloudinary.com/dpufemrnq/image/upload/v1772014590/demo/khoa_co_ban_video_399k_ypvGvvLkRBS79hp5F-original.jpg.jpg"
           alt="Hướng dẫn đăng ký" className="w-full h-auto block" />
       </section>
 
       {/* ════════════ ORANGE CTA + FORM 3 ════════════ */}
-      <section className="relative px-5 py-12 overflow-hidden noise"
-        style={{ background: C.dark2, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-        {/* Orange glow top left */}
-        <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${C.orange}, transparent)` }} />
-        <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(240,98,35,0.1) 0%, transparent 70%)` }} />
-        <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(123,47,255,0.08) 0%, transparent 70%)` }} />
+      <section className="relative px-5 py-14 overflow-hidden noise" style={{
+        background: `linear-gradient(145deg, ${C.bg3} 0%, ${C.bg4} 100%)`,
+        borderTop: '1px solid rgba(255,107,32,0.15)',
+      }}>
+        <div className="absolute top-0 inset-x-0 h-[2px]"
+          style={{ background: `linear-gradient(90deg, transparent 0%, ${C.orange} 50%, transparent 100%)` }} />
+
+        {/* Big orange glow corner */}
+        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full pointer-events-none"
+          style={{ background: `radial-gradient(circle, rgba(255,107,32,0.15) 0%, transparent 70%)` }} />
+        <div className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full pointer-events-none"
+          style={{ background: `radial-gradient(circle, rgba(124,58,255,0.12) 0%, transparent 70%)` }} />
+
+        {/* Decorative ring */}
+        <div className="hex-ring w-48 h-48" style={{ top: '-60px', left: '-60px', borderColor: 'rgba(255,107,32,0.12)' }} />
+        <div className="hex-ring w-32 h-32" style={{ top: '-32px', left: '-32px', borderColor: 'rgba(255,107,32,0.08)' }} />
 
         <Reveal>
           <div className="text-center mb-4 relative z-10">
-            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[10px] font-bold tracking-wider uppercase mb-5"
-              style={{ background: 'rgba(240,98,35,0.12)', color: C.orangeLight, border: '1px solid rgba(240,98,35,0.2)' }}>
-              <span className="w-1.5 h-1.5 rounded-full inline-block anim-glow-orange" style={{ background: C.orange }} />
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-bold tracking-wider uppercase mb-5"
+              style={{ background: 'rgba(255,107,32,0.12)', color: C.orangeLight, border: '1px solid rgba(255,107,32,0.25)' }}>
+              <span className="w-2 h-2 rounded-full inline-block" style={{ background: C.orange, boxShadow: `0 0 8px ${C.orange}` }} />
               ⏰ Cơ hội cuối cùng
             </span>
-            <h2 className="text-[25px] font-black text-white leading-tight tracking-tight">
+            <h2 className="text-[26px] font-black text-white leading-tight tracking-tight">
               39 XUẤT HỌC VỚI GIÁ<br />
-              <span style={{ color: C.orangeLight }}>ƯU ĐÃI & QUÀ TẶNG</span>
+              <span className="text-orange-grad">ƯU ĐÃI & QUÀ TẶNG</span>
             </h2>
-            <p className="text-[14px] font-semibold mt-3" style={{ color: C.white50 }}>Chỉ còn 39 xuất cuối cùng</p>
+            <p className="text-[14px] font-semibold mt-3" style={{ color: C.white45 }}>Chỉ còn 39 xuất cuối cùng</p>
           </div>
         </Reveal>
 
         <Reveal delay={0.12}>
-          <div className="glass-dark rounded-2xl p-5 relative z-10 mt-6" style={{ border: '1px solid rgba(240,98,35,0.15)' }}>
+          <div className="glass-mixed rounded-2xl p-5 relative z-10 mt-6" style={{
+            border: '1px solid rgba(255,107,32,0.2)',
+            boxShadow: '0 4px 40px rgba(255,107,32,0.1)',
+          }}>
             <ContactForm />
           </div>
         </Reveal>
       </section>
 
       {/* ════════════ FINAL CTA ════════════ */}
-      <section className="relative px-5 py-16 text-center bg-grid-rich noise" style={{ background: C.black }}>
-        <div className="absolute top-0 inset-x-0 h-[1px]" style={{ background: `linear-gradient(90deg, transparent, ${C.purple}, transparent)` }} />
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full" style={{ background: `radial-gradient(circle, rgba(123,47,255,0.08) 0%, transparent 70%)` }} />
+      <section className="relative px-5 py-20 text-center bg-grid-rich noise overflow-hidden" style={{ background: C.bg0 }}>
+        <div className="absolute top-0 inset-x-0 h-[1px]"
+          style={{ background: `linear-gradient(90deg, transparent 0%, ${C.purple} 50%, transparent 100%)` }} />
+
+        {/* Deep aurora background */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="anim-aurora1 absolute w-[500px] h-[500px] rounded-full opacity-20"
+            style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: `radial-gradient(circle, ${C.purple} 0%, transparent 70%)` }} />
+          <div className="anim-aurora2 absolute w-64 h-64 rounded-full opacity-15"
+            style={{ bottom: '-5%', right: '-5%', background: `radial-gradient(circle, ${C.orange} 0%, transparent 70%)` }} />
         </div>
 
         <Reveal>
-          <div className="anim-float inline-block text-5xl mb-6">🎯</div>
-          <h2 className="text-[27px] font-black text-white leading-[1.2] mb-3 tracking-tight">
+          <div className="anim-float inline-block text-6xl mb-7 relative z-10">🎯</div>
+          <h2 className="text-[28px] font-black text-white leading-[1.2] mb-3 tracking-tight relative z-10">
             Bắt đầu hành trình
           </h2>
-          <h2 className="text-[27px] font-black leading-[1.2] mb-3 tracking-tight">
+          <h2 className="text-[28px] font-black leading-[1.2] mb-4 tracking-tight relative z-10">
             <span className="anim-gradient" style={{
-              background: `linear-gradient(135deg, ${C.orangeLight}, ${C.orange}, ${C.purpleLight}, ${C.orange})`,
+              background: `linear-gradient(135deg, ${C.orangeLight} 0%, ${C.orange} 35%, ${C.purpleBright} 65%, ${C.pink} 100%)`,
               backgroundSize: '300% 300%', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>làm chủ AI ngay hôm nay</span>
           </h2>
-          <p className="text-[12px] mb-8 font-light" style={{ color: C.white30 }}>Đừng bỏ lỡ cơ hội thay đổi sự nghiệp</p>
+          <p className="text-[12px] mb-10 font-light relative z-10" style={{ color: C.white45 }}>Đừng bỏ lỡ cơ hội thay đổi sự nghiệp</p>
 
-          <button className="w-full py-4 rounded-xl font-bold text-[15px] text-white anim-gradient anim-glow-orange"
-            style={{ background: `linear-gradient(135deg, ${C.orange}, ${C.purple}, ${C.orange})`, backgroundSize: '200% 200%' }}>
-            Đăng ký khoá học ngay →
+          <button className="w-full py-4.5 py-[18px] rounded-xl font-bold text-[15px] text-white relative z-10 anim-glow-orange overflow-hidden"
+            style={{
+              background: `linear-gradient(135deg, ${C.orange} 0%, ${C.orangeWarm} 50%, ${C.purple} 100%)`,
+              backgroundSize: '200% 200%',
+            }}>
+            <span className="relative z-10">Đăng ký khoá học ngay →</span>
+            <div className="absolute inset-0 anim-shimmer" />
           </button>
         </Reveal>
 
-        <div className="mt-12 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <p className="text-[10px] font-mono tracking-widest" style={{ color: C.white30 }}>© 2025 MAXEDU · All rights reserved</p>
+        <div className="mt-14 pt-6 relative z-10" style={{ borderTop: '1px solid rgba(124,58,255,0.15)' }}>
+          <p className="text-[10px] tracking-widest" style={{ color: C.white20, fontFamily: "'Space Mono', monospace" }}>
+            © 2025 MAXEDU · All rights reserved
+          </p>
         </div>
       </section>
     </div>
