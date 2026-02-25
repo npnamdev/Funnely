@@ -182,31 +182,25 @@ export function ContactForm() {
                   </div>
 
                   <input
-                    id={field.id}
-                    type={field.type}
-                    required
-                    value={formData[field.id as keyof typeof formData]}
-                    onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
-                    onFocus={() => setFocusedField(field.id)}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder={field.placeholder}
-                    className="cf-input w-full pl-10 pr-10 py-3.5 rounded-xl text-[14px] font-medium text-white outline-none transition-all duration-300"
-                    style={{
-                      background: isFocused
-                        ? 'rgba(255,255,255,0.2)'
-                        : hasValue
-                          ? 'rgba(255,255,255,0.14)'
-                          : 'rgba(255,255,255,0.1)',
-                      border: `1.5px solid ${isFocused
-                        ? 'rgba(255,255,255,0.7)'
-                        : hasValue
-                          ? 'rgba(255,255,255,0.35)'
-                          : 'rgba(255,255,255,0.2)'}`,
-                      boxShadow: isFocused
-                        ? '0 0 0 3px rgba(255,255,255,0.12), 0 4px 16px rgba(0,0,0,0.1)'
-                        : 'none',
-                    }}
-                  />
+  id={field.id}
+  type={field.type}
+  required
+  value={formData[field.id as keyof typeof formData]}
+  onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
+  onFocus={() => setFocusedField(field.id)}
+  onBlur={() => setFocusedField(null)}
+  placeholder={field.placeholder}
+  className="cf-input w-full pl-10 pr-10 py-3.5 rounded-xl text-[14px] font-medium text-black outline-none transition-all duration-300"
+  style={{
+    background: '#ffffff',
+    border: `1.5px solid ${
+      isFocused ? '#111111' : hasValue ? '#999999' : '#dddddd'
+    }`,
+    boxShadow: isFocused
+      ? '0 0 0 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.08)'
+      : 'none',
+  }}
+/>
 
                   {/* Check icon when filled */}
                   {hasValue && !isFocused && (
