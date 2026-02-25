@@ -91,48 +91,46 @@ export function ContactForm() {
       boxShadow: `0 8px 48px rgba(240,98,35,0.45), 0 2px 0 rgba(255,255,255,0.15) inset`,
       padding: '1.75rem 1.5rem 1.5rem',
     }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+     <style>{`
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
-        .cf-wrap * { font-family: 'Outfit', sans-serif; box-sizing: border-box; }
+  .cf-wrap * { font-family: 'Outfit', sans-serif; box-sizing: border-box; }
 
-        .cf-input::placeholder { color: rgba(255,255,255,0.38); }
-        .cf-input:-webkit-autofill,
-        .cf-input:-webkit-autofill:hover,
-        .cf-input:-webkit-autofill:focus {
-          -webkit-text-fill-color: #fff;
-          -webkit-box-shadow: 0 0 0px 1000px rgba(255,255,255,0.1) inset;
-          transition: background-color 5000s ease-in-out 0s;
-        }
+  /* FIX placeholder */
+  .cf-input::placeholder { 
+    color: #6b7280; 
+    opacity: 1;
+  }
 
-        @keyframes btn-shimmer {
-          0% { transform: translateX(-100%) skewX(-12deg); }
-          100% { transform: translateX(220%) skewX(-12deg); }
-        }
-        @keyframes float-bg {
-          0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
-          50% { transform: translate(-50%,-50%) scale(1.15); opacity: 0.9; }
-        }
-        @keyframes check-pop {
-          0% { transform: scale(0) rotate(-10deg); opacity:0; }
-          70% { transform: scale(1.15) rotate(3deg); }
-          100% { transform: scale(1) rotate(0deg); opacity:1; }
-        }
-        @keyframes input-success {
-          0% { transform: translateX(0); }
-          20% { transform: translateX(-3px); }
-          40% { transform: translateX(3px); }
-          60% { transform: translateX(-2px); }
-          80% { transform: translateX(2px); }
-          100% { transform: translateX(0); }
-        }
-        .btn-shimmer-line {
-          position: absolute; top: 0; left: 0; width: 40%; height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
-          animation: btn-shimmer 2.8s ease-in-out infinite;
-        }
-        .check-pop { animation: check-pop 0.35s cubic-bezier(.34,1.56,.64,1) forwards; }
-      `}</style>
+  /* FIX autofill trắng chữ */
+  .cf-input:-webkit-autofill,
+  .cf-input:-webkit-autofill:hover,
+  .cf-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #000 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  @keyframes btn-shimmer {
+    0% { transform: translateX(-100%) skewX(-12deg); }
+    100% { transform: translateX(220%) skewX(-12deg); }
+  }
+  @keyframes float-bg {
+    0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%,-50%) scale(1.15); opacity: 0.9; }
+  }
+  @keyframes check-pop {
+    0% { transform: scale(0) rotate(-10deg); opacity:0; }
+    70% { transform: scale(1.15) rotate(3deg); }
+    100% { transform: scale(1) rotate(0deg); opacity:1; }
+  }
+  .btn-shimmer-line {
+    position: absolute; top: 0; left: 0; width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    animation: btn-shimmer 2.8s ease-in-out infinite;
+  }
+  .check-pop { animation: check-pop 0.35s cubic-bezier(.34,1.56,.64,1) forwards; }
+`}</style>
 
       <div className="cf-wrap relative z-10">
         {/* Floating glow blobs behind form content */}
@@ -177,7 +175,7 @@ export function ContactForm() {
                 <div className="relative">
                   {/* Left icon */}
                   <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-all duration-300"
-                    style={{ color: isFocused ? C.white : 'rgba(255,255,255,0.45)' }}>
+                    style={{ color: isFocused ? '#111' : '#6b7280' }}>
                     {field.icon}
                   </div>
 
