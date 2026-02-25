@@ -192,10 +192,10 @@ export function ContactForm() {
   placeholder={field.placeholder}
   className="cf-input w-full pl-10 pr-10 py-3.5 rounded-xl 
   text-[14px] font-medium text-black 
-  placeholder:text-gray-400
   outline-none transition-all duration-300"
   style={{
     background: '#ffffff',
+    color: '#000',
     border: `1.5px solid ${
       isFocused ? '#111111' : hasValue ? '#9ca3af' : '#e5e7eb'
     }`,
@@ -204,7 +204,6 @@ export function ContactForm() {
       : 'none',
   }}
 />
-
                   {/* Check icon when filled */}
                   {hasValue && !isFocused && (
                     <div className="absolute right-3.5 top-1/2 -translate-y-1/2 check-pop">
