@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// const API_DOMAIN = 'https://www.maxedunetwork.vn';
-const API_DOMAIN = 'https://coding.hoola.vn';
+const API_DOMAIN = 'https://www.maxedunetwork.vn';
+//const API_DOMAIN = 'https://coding.hoola.vn';
 const URL_REDIRECT = 'https://www.maxedunetwork.vn/course/khoa-hoc-vip-ai-pro-nhan-ban-1jf0eqn75';
 
 export async function POST(request: NextRequest) {
